@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Price Prediction</title>
+    <link href="../../static/css/predict_price_styles.css" rel="stylesheet">
+</head>
+<body>
+    <h1 style="text-align: center;">Product Price Prediction</h1>
+    <form id="prediction-form">
+        <label for="brand">Brand:</label>
+        <input type="text" id="brand" name="brand" required>
+
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" required>
+
+        <label for="discount">Discount:</label>
+        <input type="number" id="discount" name="discount" placeholder="Enter discount %" required>
+
+        <label for="sub-category">Sub Category:</label>
+        <input type="text" id="sub-category" name="sub_category" required>
+
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <button type="button" onclick="predictPrice()">Predict Price</button>
+    </form>
+
+    <div id="predicted-price" style="display: none;"></div>
+
+    <script>
+        function predictPrice() {
+            var form = document.getElementById("prediction-form");
+            var formData = new FormData(form);
+    
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var predictedPrice = JSON.parse(xhr.responseText).predicted_price;
+                    document.getElementById("predicted-price").innerText = "Predicted Price: $" + predictedPrice;
+                    document.getElementById("predicted-price").style.display = "block";
+                }
+            };
+            xhr.open("POST", "{% url 'predict_price_view' %}", true);
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>
+
