@@ -1,0 +1,190 @@
+{% extends "headerfooter.html" %}
+
+    {% block content %}
+
+        
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="input-group w-75 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Search End -->
+
+
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Add Categary</h1>
+        </div>
+        <!-- Single Page Header End -->
+        <div class="container-fluid py-5 mt-5" id="profile">
+        </div>    
+
+        {% comment %} <div class="container-fluid py-5 mt-5">
+            <div class="container py-5">
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-8 col-xl-9">
+                        <div class="row g-4">
+                            <div class="col-lg-6">
+                                <div class="border rounded">
+                                    <a href="#">
+                                        <img src="img/single-item.jpg" class="img-fluid rounded" alt="Image">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <h4 class="fw-bold mb-3">Brocoli</h4>
+                                <p class="mb-3">Category: Vegetables</p>
+                                <h5 class="fw-bold mb-3">3,35 $</h5>
+                                <div class="d-flex mb-4">
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                                <p class="mb-4">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc.</p>
+                                <p class="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock flounder; chain pickerel hatchetfish, pencilfish snailfish</p>
+                                <div class="input-group quantity mb-5" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm text-center border-0" value="1">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+
+
+        <!-- Contact Start -->
+        {% comment %} <div class="container-fluid contact py-5">
+            <div class="container py-5">
+                <div class="p-5 bg-light rounded">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="text-center mx-auto" style="max-width: 700px;">
+                                <h1 class="text-primary">Get in touch</h1>
+                                <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mx-auto col-lg-7">
+                            <form id="yourForm" onsubmit="event.preventDefault();" autocomplete="off">
+                                {% csrf_token %}
+                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="title" placeholder="title" required>
+                                <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" name="description" placeholder="description"></textarea>
+                                <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " onclick="mySubmitFunction()">Add</button>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+        <!-- Contact End -->
+
+
+
+        <!-- Back to Top -->
+        <script>
+            window.onload = function() {
+                mySubmitFunction();
+                //getthecategary(4)
+
+            };
+            console.log("masab")
+            let token;
+            let accessToken;
+            let refreshToken;
+            function mySubmitFunction() {
+    
+                console.log("Event is called----")
+                var methodname = "GET";
+                url = "http://127.0.0.1:8000/auth/profile/"
+    
+    
+                accesstoken = localStorage.getItem("AccessToken")
+        
+                let options = {
+                    method: methodname,
+                    headers: {
+                        //'X-CSRFToken': csrfToken,  // Include CSsRF token in headers
+                        'Authorization': 'Bearer ' + accesstoken,  // Include the access token in the 'Authorization' header
+                    },
+                }
+                let fetchRes = fetch(url, options);
+                fetchRes.then(res => {
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            console.error("API request failed:", errorData);
+                            throw new Error("Network response was not OK");
+                        });
+                    }
+                    return res.json();  // Return the JSON data promise
+                }).then(data => {
+                    if (data) {
+                        console.log("data of profile----",data.image)
+                        let tab = " ";                  
+                        tab = `<div class="container py-5">
+                                    <div class="row g-4 mb-5">
+                                        <div class="col-lg-8 col-xl-9">
+                                            <div class="row g-4">
+                                                <div class="col-lg-6">
+                                                    <div class="border rounded">
+                                                        <a href="#">
+                                                            <img src="${data.image}" class="img-fluid rounded" alt="Image">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <h4 class="fw-bold mb-3">${data.first_name}, ${data.last_name}</h4>
+                                                    <h5 class="fw-bold mb-3">${data.email}</h5>
+                                                    <p class="mb-3">Phone no:  ${data.phone_no}</p>
+                                                    
+                                                   
+                                                    <p class="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock flounder; chain pickerel hatchetfish, pencilfish snailfish</p>
+                                                    <div class="input-group quantity mb-5" style="width: 100px;">
+                                                       
+                                                        
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>`;    
+                        document.getElementById("profile").innerHTML = tab; 
+                    } else {
+                        console.log("API request failed or did not indicate success.");
+                    }
+                }).catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+        
+        </script>
+      
+    
+    {% endblock content %}

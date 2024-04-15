@@ -37,6 +37,7 @@ AUTH_USER_MODEL = "authentication.User"
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'products'
+    
+    
 ]
 
 MIDDLEWARE = [
@@ -146,10 +149,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Static file serving.
 # https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
 STORAGES = {
-    # ...
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "media",
+        },
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
 CSRF_TRUSTED_ORIGINS = ['https://web-production-58829.up.railway.app']
+
+# Base url to serve media files  
+MEDIA_URL = "/media/"
+MEDIA_ROOT=os.path.join(BASE_DIR,"media/")
+  
+

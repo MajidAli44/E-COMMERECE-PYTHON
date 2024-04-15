@@ -1,0 +1,209 @@
+{% extends "headerfooter.html" %}
+
+{% block content %}
+
+        <!-- Spinner Start -->
+       
+        <!-- Spinner End -->
+
+
+        <!-- Navbar start -->
+       
+        <!-- Navbar End -->
+
+
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="input-group w-75 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Search End -->
+
+
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Add Categary</h1>
+            <!--<ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item active text-white">Contact</li>
+            </ol>-->
+        </div>
+        <!-- Single Page Header End -->
+
+
+        <!-- Contact Start -->
+        <div class="container-fluid contact py-5">
+            <div class="container py-5">
+                <div class="p-5 bg-light rounded">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="text-center mx-auto" style="max-width: 700px;">
+                                <h1 class="text-primary">Get in touch</h1>
+                                <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mx-auto col-lg-7">
+                            <form id="yourForm" onsubmit="event.preventDefault();" autocomplete="off">
+                                {% csrf_token %}
+                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="title" placeholder="title" required>
+                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="price" placeholder="price per KG" required>
+                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="quantity" placeholder="Total quantity of stock" required>
+                                <input type="file" class="w-100 form-control border-0 py-3 mb-4" name="image" placeholder="Image" required>
+                                <select id="categorySelect" class="w-100 form-control border-0 py-3 mb-4" required>
+                                </select>
+                                <input type="hidden" id="selectedCategoryId" name="categary" required>
+                                
+                                <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" name="description" placeholder="description"></textarea>
+                                <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " onclick="mySubmitFunction()">Add</button>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            console.log("masab")
+            let token;
+            let accessToken;
+            let refreshToken;
+            window.onload = function() {
+                getthecategary();
+                //getthecategary(4)
+
+            };
+
+            function getthecategary() {
+                console.log("Event is called----in get categary");
+                console.log("Event is called----in get categary");
+                var methodname = "GET";
+                //var baseUrl = "http://127.0.0.1:8000/category/products/";
+                //http://127.0.0.1:8000/categary/products/3/products_by_category/
+                //var url = baseUrl + categoryId + "/products_by_category/";
+                var url = `http://127.0.0.1:8000/categary/`;
+            
+                //const form = document.getElementById('yourForm');
+                //const formData = new FormData(form);
+                //const csrfToken = formData.get('csrfmiddlewaretoken');
+            
+                accesstoken = localStorage.getItem("AccessToken");
+            
+                let options = {
+                    method: methodname,
+                    //body: ,
+                    headers: {
+                        //'X-CSRFToken': csrfToken,  // Include CSRF token in headers
+                        'Authorization': 'Bearer ' + accesstoken,  // Include the access token in the 'Authorization' header
+                    },
+                };
+                console.log("url is-----",url)
+                console.log("options is-----",options)
+                let fetchRes = fetch(url, options);
+                fetchRes.then(res => {
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            console.error("API request failed:", errorData);
+                            throw new Error("Network response was not OK");
+                        });
+                    }
+                    return res.json();  // Return the JSON data promise
+                }).then(data => {
+                    if (data) {
+                        console.log("responce----", data)
+                        let dropdownOptions = `<option value="" disabled selected>Select category</option>`;
+                        for (let category of data) {
+                            dropdownOptions += `<option value="${category.id}">${category.title}</option>`;
+                            console.log("value",category.id)
+                        }
+                        // Update the dropdown list with the options
+                        document.getElementById("categorySelect").innerHTML = dropdownOptions; 
+                    } else {
+                        console.log("API request failed or did not indicate success.");
+                    }
+                }).catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+            
+            // Add an event listener to detect changes in the dropdown
+            document.getElementById("categorySelect").addEventListener("change", function() {
+                // Get the selected option
+                let selectedOption = this.options[this.selectedIndex];
+                
+                // Get the selected option's value and title
+                let selectedCategoryId = selectedOption.value;
+                let selectedCategoryTitle = selectedOption.textContent;
+                
+                // Update the value of the hidden input field with the selected category ID
+                document.getElementById("selectedCategoryId").value = selectedCategoryId;
+                
+                // Optionally, you can do something with the selected category title if needed
+                console.log("Selected category title:", selectedCategoryId);
+            });
+
+
+
+
+            function mySubmitFunction() {
+    
+                console.log("Event is called----")
+                var methodname = "POST";
+                url = "http://127.0.0.1:8000/products/"
+    
+                const form = document.getElementById('yourForm');
+                const formData = new FormData(form);
+                const csrfToken = formData.get('csrfmiddlewaretoken');
+    
+                accesstoken = localStorage.getItem("AccessToken")
+        
+                let options = {
+                    method: methodname,
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken,  // Include CSsRF token in headers
+                        'Authorization': 'Bearer ' + accesstoken,  // Include the access token in the 'Authorization' header
+                        //'Content-Type': 'application/x-www-form-urlencoded', 
+                    },
+                }
+                let fetchRes = fetch(url, options);
+                fetchRes.then(res => {
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            console.error("API request failed:", errorData);
+                            throw new Error("Network response was not OK");
+                        });
+                    }
+                    //token = res.json()
+                    return res.json();  // Return the JSON data promise
+                }).then(data => {
+                    if (data) {
+                        let redirectUrl = "http://127.0.0.1:8000/categary/index/";
+                        //redirectUrl += `?access_token=${accessToken}&refresh_token=${refreshToken}`;
+                        // Redirect to the new URL
+                        window.location.href = redirectUrl;
+                        //window.location.href = "index.html";
+                    } else {
+                        console.log("API request failed or did not indicate success.");
+                    }
+                }).catch(error => {
+                    console.error("Error:", error);
+                });
+            }        
+        </script>     
+    
+{% endblock content %}

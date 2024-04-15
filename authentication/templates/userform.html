@@ -1,0 +1,77 @@
+{% extends "headerfooter.html" %}
+
+{% block content %}
+{% comment %} <form action="{% url 'post_data-render-list'%}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-success">
+        <i class="fas fa-plus"></i>Back To List
+    </button>
+</form> {% endcomment %}
+<div style="margin-top: 200px;">
+<form id="yourForm" onsubmit="return mySubmitFunction()" autocomplete="off">
+    {% csrf_token %}
+    {% comment %} {{form}} {% endcomment %}
+    <div class="form-row">
+      {{ form.first_name.label_tag }}
+      {{ form.first_name }}
+    </div>
+    <div class="form-row">
+      {{ form.last_name.label_tag }}
+      {{ form.last_name }}
+    </div>
+    <div class="form-row">
+      {{ form.email.label_tag }}
+      {{ form.email }}
+    </div>
+    <div class="form-row">
+      {{ form.password.label_tag }}
+      {{ form.password }}
+    </div>
+    <div class="form-row">
+      {{ form.phone_no.label_tag }}
+      {{ form.phone_no }}
+    </div>
+    <div class="form-row">
+      {{ form.image.label_tag }}
+      {{ form.image }}
+    </div>
+    <button type="submit" class="btn btn-success" value="submit">Submit</button>
+</form> 
+</div>
+
+<script>
+    console.log("masab")
+    function mySubmitFunction() {
+
+        //if (id != 0) {
+//            var methodname = "PATCH";
+ //           url = "http://127.0.0.1:8000/api/"+ id +"/"
+ //       } 
+ //       else {
+            var methodname = "POST";
+            url = "http://127.0.0.1:8000/api/create/"
+      //  }
+        const form = document.getElementById('yourForm');
+        const formData = new FormData(form);
+
+        let options = {
+            method: methodname,
+            body: formData,
+        }
+        let fetchRes = fetch(
+            url, options);
+            fetchRes.then(res =>
+            res.json()).then(d => {
+                console.log("maa",d)
+        })
+        // Redirect to another page
+       // if(methodname == 'PATCH')
+       // {
+       //     window.location.href = "post_data-render-list";
+       // }
+       // window.location.href = "post_data-render-list";
+    }
+
+</script>
+
+{% endblock content %}

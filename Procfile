@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic --no-input && gunicorn Eshop.asgi:application
+web: python manage.py migrate && python manage.py collectstatic --no-input && gunicorn Eshop.wsgi:application
