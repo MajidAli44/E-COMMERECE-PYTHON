@@ -4,7 +4,7 @@ from authentication.models import User
 from django.core.validators import MinValueValidator
 
 class Products(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=30)
     unit_price = models.DecimalField(
         max_digits=6, 
         decimal_places=2,
@@ -14,7 +14,7 @@ class Products(models.Model):
         validators=[MinValueValidator(1)]
     )
     image = models.ImageField(upload_to='product/')
-    description = models.TextField()
+    description = models.TextField(max_length=150)
     last_update = models.DateTimeField(auto_now=True)
  
     def __str__(self):
