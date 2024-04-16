@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers, serializers, viewsets, permissions
 from .serializers import *
 from .models import *
 
@@ -10,6 +10,9 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from gensim.models import Word2Vec
 from django.shortcuts import render
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.db.models import Sum
 
 # Create your views here.
 
@@ -45,8 +48,21 @@ class OrderViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Cart instances.
     """
-    serializer_class = OrderSerializer
     queryset = Order.objects.all()
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return OrderWriteSerializer
+        return OrderReadSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def recommended_product(self, request):    
+        queryset = self.queryset.select_related('product')\
+        .values('product','product__title','product__unit_price','product__image')\
+        .annotate(total_sum=Sum('quantity')).order_by('-total_sum')[:10]
+        return Response(queryset)
+
+
 
 def average_word_vectors(words, model, vocabulary, num_features):
     feature_vector = np.zeros((num_features,), dtype="float64")

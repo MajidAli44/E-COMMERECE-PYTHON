@@ -61,8 +61,36 @@
             </div> -->
             <!-- Hero End -->
 
+            <!-- Bestsaler Product Start -->
+            <div class="container-fluid pt-5">
+                <div class="container py-5">
+                    <h1 class="mx-auto mt-5 pt-5">Recommended Products</h1>
+                    <div class="row mt-0 align-items-center">
+                        <div class="col-auto">
+                            <button class="btn btn-primary me-3" id="prevBtn"><i class="fas fa-chevron-left align-middle"></i></button>
+                        </div>
+                        <div class="col">
+                            <div class="d-flex flex-wrap" id="recommended_products_container">
+                                <!-- Recommended products will be dynamically inserted here -->
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" id="nextBtn"><i class="fas fa-chevron-right align-middle"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            
+            <!-- Bestsaler Product End -->
+
+
+
+
             <!-- Fruits Shop Start-->
-            <div class="container-fluid fruite py-5">
+            <div class="container-fluid fruite pb-5">
                 <div class="container py-5">
                     <div class="tab-class text-center">
                         <div class="row g-4">
@@ -91,7 +119,7 @@
             <!-- Fruits Shop End-->
 
             <!-- Fact Start -->
-            <div class="container-fluid py-5">
+            {% comment %} <div class="container-fluid py-5">
                 <div class="container">
                     <div class="bg-light p-5 rounded">
                         <div class="row g-4 justify-content-center">
@@ -126,22 +154,24 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> {% endcomment %}
             
         <script>
-            console.log("Javscript is called----")
+            const API_BASE_URL = "{{ SITE_URL }}";
+            let currentIndex = 0;
             window.onload = function() {
                 console.log("Onload is called----")
                 ShowProducts();
-                //show_best_seller_product();
+                show_recomended_products();
                 //getthecategary(4)
 
             };
 
-
+            
             function ShowProducts() {
                 console.log("Show products is called----")
-                var url = "http://127.0.0.1:8000/products";
+                
+                var url = `${API_BASE_URL}/products/`;
                 let options = {
                     method: "GET",
                 };
@@ -206,7 +236,7 @@
                 const body = JSON.stringify(data);
 
                 var methodname = "POST";
-                var url = `http://127.0.0.1:8000/carts/`;
+                var url = `${API_BASE_URL}/carts/`;
             
                 accesstoken = localStorage.getItem("AccessToken");
             
@@ -237,17 +267,52 @@
                     console.error("Error:", error);
                 });
             }
-
-            function show_best_seller_product() {
-                var methodname = "GET";
-                url = "http://127.0.0.1:8000/order/best_seller_product/"
+            
+        /*    document.getElementById("prevBtn").addEventListener("click", function() {
+                if (currentPage > 0) {
+                    currentPage--;
+                    show_recomended_products();
+                }
+            });
+            
+            document.getElementById("nextBtn").addEventListener("click", function() {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    show_recomended_products();
+                }
+            });*/
+            let products_data = [];
+            function render_recommended_products() {
+                let tab = '';
+                for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
+                    const d = products_data[i];
+                    tab += `
+                        <div class="col-lg-4 m-0">
+                            <div class="p-4 rounded bg-light m-lg-2">
+                                <div class="row align-items-center">
+                                    <div class="col-6">
+                                        <img src="${API_BASE_URL}/media/${d.product__image}" class="img-fluid rounded-circle w-100" alt="">
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="h5">${d.product__title}</a>
+                                        <h4 class="mb-3">${d.product__unit_price}$</h4>
+                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                document.getElementById("recommended_products_container").innerHTML = tab;
+            }
+            
+            function show_recomended_products() {
+                url = `${API_BASE_URL}/products/order/recommended_product/`
                 accesstoken = localStorage.getItem("AccessToken")
+                console.log("Access Token is----", accesstoken)
                 let options = {
-                    method: methodname,
-                    //body: ,
+                    method: "GET",
                     headers: {
-                        //'X-CSRFToken': csrfToken,  // Include CSsRF token in headers
-                        'Authorization': 'Bearer ' + accesstoken,  // Include the access token in the 'Authorization' header
+                        'Authorization': 'Bearer ' + accesstoken,
                     },
                 }
                 let fetchRes = fetch(url, options);
@@ -255,47 +320,38 @@
                     if (!res.ok) {
                         return res.json().then(errorData => {
                             console.error("API request failed:", errorData);
-                            throw new Error("Network response was not OK");
                         });
                     }
                     return res.json();  // Return the JSON data promise
                 }).then(data => {
-                    if (data) {
-                        let tab = " ";
-                        for (let d of data) {       
-                            console.log("image---",d.product__image)                    
-                            tab += `                            
-                            <div class="col-lg-6 col-xl-4">
-                                <div class="p-4 rounded bg-light">
-                                    <div class="row align-items-center">
-                                        <div class="col-6">
-                                            <img src="http://127.0.0.1:8000/${d.product__image}" class="img-fluid rounded-circle w-100" alt="">
-                                        </div>
-                                        <div class="col-6">
-                                            <a href="#" class="h5">${d.product__title}</a>
-                                            <div class="d-flex my-3">
-                                                <i class="fas fa-star text-primary"></i>
-                                                <i class="fas fa-star text-primary"></i>
-                                                <i class="fas fa-star text-primary"></i>
-                                                <i class="fas fa-star text-primary"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                            <h4 class="mb-3">${d.product__price} PKR</h4>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                        }    
-                        document.getElementById("best_seller_products").innerHTML = tab; 
-                    } 
-                    else {
+                    products_data = data;
+                    if (products_data) {
+                        console.log("Data is---",products_data)
+                        render_recommended_products()
+                        } else {
                         console.log("API request failed or did not indicate success.");
                     }
                 }).catch(error => {
                     console.error("Error:", error);
                 });
             }
+
+            document.getElementById('prevBtn').addEventListener('click', function() {
+                console.log("BUtton clicked")
+                if (currentIndex > 0) {
+                    currentIndex -= 3;
+                    render_recommended_products();
+                }
+            });
+        
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                console.log("Next BUtton clicked", currentIndex)
+                if (currentIndex + 3 < products_data.length) {
+                    currentIndex += 3;
+                    console.log("Inside Log", currentIndex)
+                    render_recommended_products();
+                }
+            });
             
         </script> 
 

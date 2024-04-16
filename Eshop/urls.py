@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from products.views import IndexPageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('products/', include('products.urls')),
     path('auth/', include('authentication.urls')),
+    path('', IndexPageView, name='index_page')
 ]
 
 if settings.DEBUG:

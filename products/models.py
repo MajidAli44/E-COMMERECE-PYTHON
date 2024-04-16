@@ -14,7 +14,7 @@ class Products(models.Model):
         validators=[MinValueValidator(1)]
     )
     image = models.ImageField(upload_to='product/')
-    description = models.TextField(max_length=150)
+    description = models.TextField()
     last_update = models.DateTimeField(auto_now=True)
  
     def __str__(self):
@@ -36,8 +36,6 @@ class Order(models.Model):
     quantity = models.PositiveSmallIntegerField()
     placed_at = models.DateTimeField(auto_now_add=True)
  
-    def __str__(self):
-        return self.date  
     
 
         

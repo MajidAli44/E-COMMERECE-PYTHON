@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from authentication.serializers import UserSerializer
 
 class ProductReadSerializer(serializers.ModelSerializer):
     cart_set= serializers.SerializerMethodField()
@@ -34,7 +35,14 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ['id','product','quantity','user']
         
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderReadSerializer(serializers.ModelSerializer):
+    product = ProductReadSerializer()  # Nested Serializer
+    user = UserSerializer()
     class Meta:
         model = Order
-        fields = ['id','product','price','quantity']
+        fields = ('id','user','billing','price','product','quantity','date')
+
+class OrderWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('id','user','billing','price','product','quantity','date')      

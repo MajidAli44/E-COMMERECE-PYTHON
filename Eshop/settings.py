@@ -45,12 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
-    'products'
-    
+    'products',
+    'corsheaders',
+    'rest_framework_simplejwt',
     
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -74,6 +76,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'products.context_processors.api_base_url',
+                'authentication.context_processors.api_base_url',
             ],
         },
     },
@@ -160,10 +164,29 @@ STORAGES = {
     },
 }
 
-CSRF_TRUSTED_ORIGINS = ['https://web-production-58829.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://web-production-58829.up.railway.app','http://localhost:8000','http://127.0.0.1:8000']
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    'http://127.0.0.1:8000'
+]
 
+CORS_ORIGIN_ALLOW_ALL=True
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_CREDENTIALS = True
 # Base url to serve media files  
 MEDIA_URL = "/media/"
 MEDIA_ROOT=os.path.join(BASE_DIR,"media/")
   
+from datetime import timedelta
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=58),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+  # It will work instead of the default serializer(TokenObtainPairSerializer).
+    "TOKEN_OBTAIN_SERIALIZER": "authentication.serializers.MyTokenObtainPairSerializer",
+  # ...
+}
+
+SITE_URL = 'http://localhost:8000'
+if os.environ.get('DJANGO_ENV') == 'production':
+    SITE_URL = 'https://yourdomain.com'

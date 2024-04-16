@@ -19,28 +19,15 @@
         </div>
         <!-- Modal Search End -->
 
-
-        <!-- Single Page Header start -->
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Signup</h1>
-            <!--<ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Contact</li>
-            </ol>-->
-        </div>
-        <!-- Single Page Header End -->
-
-
         <!-- Contact Start -->
-        <div class="container-fluid contact py-5">
+        <div class="container-fluid contact pt-5 mt-3">
             <div class="container py-5">
                 <div class="p-5 bg-light rounded">
                     <div class="row g-4">
                         <div class="col-12">
                             <div class="text-center mx-auto" style="max-width: 700px;">
-                                <h1 class="text-primary">Get in touch</h1>
-                                <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p>
+                                <h1 class="text-primary">SignUp</h1>
+                                {% comment %} <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p> {% endcomment %}
                             </div>
                         </div>
                         
@@ -51,13 +38,13 @@
                                 <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="last_name" placeholder="Last Name" required>
                                 <input type="email" class="w-100 form-control border-0 py-3 mb-4" name="email" autocomplete="off" placeholder="Enter Your Email" required>
                                 <input type="password" class="w-100 form-control border-0 py-3 mb-4" name="password" autocomplete="off" placeholder="Password" required>
-                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="street" placeholder="Street Address" required>
-                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="city" placeholder="City" required>
-                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="country" placeholder="Country" required>
-                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="postcode" placeholder="Postcode" required>
+                                {% comment %} <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="street" placeholder="Street Address" required> {% endcomment %}
+                                {% comment %} <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="city" placeholder="City" required> {% endcomment %}
+                                {% comment %} <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="country" placeholder="Country" required> {% endcomment %}
+                                {% comment %} <input type="text" class="w-100 form-control border-0 py-3 mb-4" name="postcode" placeholder="Postcode" required> {% endcomment %}
                                 <input type="date" class="w-100 form-control border-0 py-3 mb-4" value="00-00-00" name="dob" required>
                                 <input type="tel" class="w-100 form-control border-0 py-3 mb-4" name="phone_no" placeholder="Phone no" required>
-                                <input type="file" class="w-100 form-control border-0 py-3 mb-4" name="image" placeholder="Image" required>
+                                {% comment %} <input type="file" class="w-100 form-control border-0 py-3 mb-4" name="image" placeholder="Image" required> {% endcomment %}
                                 <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " onclick="CreateUser()">Submit</button>
                             </form>
                         </div>
@@ -66,34 +53,7 @@
                 </div>
             </div>
         </div>
-        <!-- Contact End -->
 
-
-        <!-- Footer Start -->
-        
-        <!-- Footer End -->
-
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All right reserved.</span>
-                    </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright End -->
-
-
-
-        <!-- Back to Top -->
         <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
         
@@ -108,11 +68,10 @@
     <!-- Template Javascript -->
     <!--<script src="../../static/js/main.js"></script>-->
     <script>
-        console.log("masab")
+        const API_BASE_URL = "{{ SITE_URL }}";
         function CreateUser() {
 
-            console.log("Event is called----`")
-            url = "http://127.0.0.1:8000/auth/user/"
+            url = `${API_BASE_URL}/auth/user/`
 
             const form = document.getElementById('yourForm');
             const formData = new FormData(form);
@@ -133,21 +92,15 @@
             }).then(data => {
                 console.log("Response data:", data);
             
-                if (data && data.message) {
-                    console.log("Redirecting...");
-                    window.location.href = "http://127.0.0.1:8000/auth/login/";
+                if (data) {
+                    alert('Account Created Successfully!!')
+                    window.location.href = `${API_BASE_URL}/auth/loginPage`;
                 } else {
                     console.log("API request failed or did not indicate success.");
                 }
             }).catch(error => {
                 console.error("Error:", error);
             });
-            //if(!fetchRes.ok){
-            //    console.log(fetchRes.json())
-            //    throw new Error("Network response was not OK");
-            //}
-            //const result = response.json();
-            //console.log("Success:", result);
         }
     </script>
 

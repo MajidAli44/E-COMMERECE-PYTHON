@@ -11,3 +11,5 @@ pandas==2.2.2
 joblib==1.4.0
 gensim==4.3.2
 scikit-learn==1.4.2
+scipy==1.11.3
+djangorestframework-simplejwt==5.3.1

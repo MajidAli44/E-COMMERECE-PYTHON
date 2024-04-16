@@ -4,12 +4,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import User
 from .serializers import *
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 def Signup_Page(request):
     if request.method == "GET":
         return render(request,'signup.html')
     elif request.method == 'POST':
-        serializer = UserWriteSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             user.save()
@@ -29,8 +34,4 @@ def render_forgetpassword_page(request):
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all
-    
-    def get_serializer_class(self):
-        if self.action in ('create','update','partial_update'):
-            return UserWriteSerializer
-        return UserReadSerializer
+    serializer_class = UserSerializer
