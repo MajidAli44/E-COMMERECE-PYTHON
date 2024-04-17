@@ -75,11 +75,15 @@
             
         <script>
             const API_BASE_URL = "{{ SITE_URL }}";
+            const accessToken = localStorage.getItem("AccessToken");
             let currentIndex = 0;
             window.onload = function() {
                 console.log("Onload is called----")
                 ShowProducts();
-                show_recomended_products();
+                if(accessToken){
+                    show_recomended_products();
+                }
+                
                 //getthecategary(4)
 
             };
@@ -139,7 +143,6 @@
             }
             
             function addToCartClicked(pid) {
-                const accessToken = localStorage.getItem("AccessToken");
                 // Decode the JWT access token using cdn
                 const decodedToken = jwtDecode(accessToken);
                 const userId = decodedToken.user_id;
