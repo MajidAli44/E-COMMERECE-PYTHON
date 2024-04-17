@@ -15,12 +15,16 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+import dj_database_url
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+dotenv_path = os.path.join(BASE_DIR, '.env')
+# print("Path is", dotenv_path)
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
 
-import dj_database_url
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -107,6 +111,7 @@ DATABASES = {
     )
 }
 
+print("database--",DATABASES['default'])
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 

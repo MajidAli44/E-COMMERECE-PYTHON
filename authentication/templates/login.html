@@ -191,9 +191,14 @@
                 if (data) {
                     localStorage.setItem("AccessToken", data.access);
                     localStorage.setItem("RefreshToken", data.refresh);
+                    const decodedToken = jwtDecode(data.access);
+                    const admin = decodedToken.role;
                     console.log("Access--",localStorage.getItem("AccessToken"));
                     console.log("Refresh--",localStorage.getItem("RefreshToken"));
                     alert("Login Successfully")
+                    if (admin){
+                        
+                    }
                     let redirectUrl = `${API_BASE_URL}`;
                     //redirectUrl += `?access_token=${accessToken}&refresh_token=${refreshToken}`;
 
