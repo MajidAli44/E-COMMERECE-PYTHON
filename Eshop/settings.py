@@ -106,7 +106,7 @@ DATABASES = {
         conn_max_age=1000
     )
 }
-
+print("Database",DATABASES['default'])
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
