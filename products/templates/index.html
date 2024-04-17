@@ -52,7 +52,6 @@
                                 <h1>Our Products</h1>
                             </div>
                             <div class="col-lg-8 text-end">
-                                {% comment %} <ul class="nav nav-pills d-inline-flex text-center mb-5"> {% endcomment %}
                                 <ul class="nav nav-pills d-inline-flex text-center mb-5" id="admin_exerciseList">
                                 </ul>
                             </div>
@@ -111,7 +110,11 @@
                         let tab = " ";
                         for (let d of data) {   
                             console.log("cat image----",d.image)
-                            console.log("title is----",d.title)                        
+                            console.log("title is----",d.title)
+                            let Description = d.description.split(' ').slice(0, 10).join(' ');
+                            if (d.description.split(' ').length > 10) {
+                                Description += '...';
+                            }                        
                             tab += `                            
                                     <div class="col-md-6 col-lg-4 col-xl-3">
                                         <div class="rounded position-relative fruite-item">
@@ -120,7 +123,7 @@
                                             </div>
                                             <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                 <h4>${d.title}</h4>
-                                                <p style="text-align:justify;">${d.description}</p>
+                                                <p style="text-align:justify;">${Description}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
                                                         if (d.cart_set.length == 0)
