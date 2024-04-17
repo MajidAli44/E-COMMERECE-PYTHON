@@ -110,12 +110,7 @@ DATABASES = {
         conn_max_age=1000
     )
 }
-<<<<<<< HEAD
-print("Database",DATABASES['default'])
-=======
 
-print("database--",DATABASES['default'])
->>>>>>> feec974c4fa8c417981ad8bd806947dcc094f06c
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
