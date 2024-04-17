@@ -164,10 +164,11 @@ STORAGES = {
     },
 }
 
-CSRF_TRUSTED_ORIGINS = ['https://web-production-58829.up.railway.app','http://localhost:8000','http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['https://web-production-58829.up.railway.app','http://localhost:8000','http://127.0.0.1:8000','https://e-commerece.up.railway.app']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
-    'http://127.0.0.1:8000'
+    'http://127.0.0.1:8000',
+    'https://e-commerece.up.railway.app'
 ]
 
 CORS_ORIGIN_ALLOW_ALL=True
@@ -189,4 +190,4 @@ SIMPLE_JWT = {
 
 SITE_URL = 'http://localhost:8000'
 if os.environ.get('DJANGO_ENV') == 'production':
-    SITE_URL = 'https://yourdomain.com'
+    SITE_URL = 'https://e-commerece.up.railway.app'
