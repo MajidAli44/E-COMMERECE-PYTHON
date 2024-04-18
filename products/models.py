@@ -35,6 +35,7 @@ class Order(models.Model):
     price = models.IntegerField()
     quantity = models.PositiveSmallIntegerField()
     placed_at = models.DateTimeField(auto_now_add=True)
+
  
     
 

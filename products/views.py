@@ -3,6 +3,7 @@ from rest_framework import routers, serializers, viewsets, permissions
 from .serializers import *
 from .models import *
 
+
 from django.http import JsonResponse
 import pickle
 import numpy as np
@@ -217,5 +218,7 @@ def recommend_products(request, user_id):
 
         
         similar_product_ids = knn_model.predict(reduced_features)
-        print("Similiar producrs---", similar_product_ids)
+        # similar_products = ProductsInformation.objects.filter(id__in=similar_product_ids).values('articleType', 'usage', 'link')
+
+        print("Similiar products ID---", similar_product_ids)
         return JsonResponse({'similar_product_ids': similar_product_ids.tolist()})
