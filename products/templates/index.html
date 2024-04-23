@@ -114,7 +114,9 @@
                             let Description = d.description.split(' ').slice(0, 10).join(' ');
                             if (d.description.split(' ').length > 10) {
                                 Description += '...';
-                            }                        
+                            } 
+                            console.log("Image of product", d.image)
+                            console.log("type of Image of product", typeof d.image)                       
                             tab += `                            
                                     <div class="col-md-6 col-lg-4 col-xl-3">
                                         <div class="rounded position-relative fruite-item">
@@ -203,12 +205,15 @@
                             <div class="d-flex flex-wrap">`;
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
+                    console.log("image is url--", d.product__image)
+                    console.log("type of before of product", typeof d.product__image)
+                       
                     tab += `
                         <div class="col-lg-4 m-0">
                             <div class="p-4 rounded bg-light m-lg-2">
                                 <div class="row align-items-center">
                                     <div class="col-6">
-                                        <img src="${API_BASE_URL}/media/${d.product__image}" class="img-fluid rounded-circle w-100" alt="">
+                                        <img src="${d.product__image}" class="img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <div class="col-6">
                                         <a href="#" class="h5">${d.product__title}</a>

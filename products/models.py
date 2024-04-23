@@ -4,8 +4,13 @@ from authentication.models import User
 from django.core.validators import MinValueValidator
 
 class Products(models.Model):
+<<<<<<< HEAD
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=255)
+=======
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=30)
+>>>>>>> 9057a3b332c7bde2f5b682a41b554d72312605f0
     unit_price = models.DecimalField(
         max_digits=6, 
         decimal_places=2,

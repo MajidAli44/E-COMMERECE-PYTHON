@@ -78,7 +78,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         queryset = self.queryset.select_related('product')\
         .values('product','product__title','product__unit_price','product__image')\
         .annotate(total_sum=Sum('quantity')).order_by('-total_sum')[:10]
-        return Response(queryset)
+        return Response(queryset, context={'MEDIA_URL': settings.MEDIA_URL})
 
 
 
