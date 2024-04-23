@@ -4,6 +4,7 @@ from authentication.models import User
 from django.core.validators import MinValueValidator
 
 class Products(models.Model):
+    id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=30)
     unit_price = models.DecimalField(
         max_digits=6, 
@@ -37,23 +38,23 @@ class Order(models.Model):
     placed_at = models.DateTimeField(auto_now_add=True)
 
 
-class ProductsInformation(models.Model):
-    id = models.AutoField(primary_key=True)
-    gender = models.CharField(max_length=20)
-    mastercategory = models.CharField(max_length=50)
-    subcategory = models.CharField(max_length=50)
-    articletype = models.CharField(max_length=50)
-    basecolour = models.CharField(max_length=50)
-    season = models.CharField(max_length=20)
-    year = models.IntegerField()  # Using IntegerField instead of YearField
-    usage = models.CharField(max_length=50)
-    productdisplayname = models.CharField(max_length=100)
-    filename = models.CharField(max_length=255)
-    link = models.CharField(max_length=255)
-    file_found = models.BooleanField(default=False)  # Adjusted the default value
+# class ProductsInformation(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     gender = models.CharField(max_length=20)
+#     mastercategory = models.CharField(max_length=50)
+#     subcategory = models.CharField(max_length=50)
+#     articletype = models.CharField(max_length=50)
+#     basecolour = models.CharField(max_length=50)
+#     season = models.CharField(max_length=20)
+#     year = models.IntegerField()  # Using IntegerField instead of YearField
+#     usage = models.CharField(max_length=50)
+#     productdisplayname = models.CharField(max_length=100)
+#     filename = models.CharField(max_length=255)
+#     link = models.CharField(max_length=255)
+#     file_found = models.BooleanField(default=False)  # Adjusted the default value
 
-    class Meta:
-        db_table = 'products_information'
+#     class Meta:
+#         db_table = 'products_information'
  
     
 
