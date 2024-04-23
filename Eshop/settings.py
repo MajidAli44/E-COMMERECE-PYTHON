@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'products',
     'corsheaders',
     'rest_framework_simplejwt',
+    'storages',
     
 ]
 
