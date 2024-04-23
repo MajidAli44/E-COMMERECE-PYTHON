@@ -86,7 +86,7 @@
                 //getthecategary(4)
 
             };
-
+               
             
             function ShowProducts() {
                 console.log("Show products is called----")
@@ -238,7 +238,7 @@
                 });
             
                 document.getElementById('nextBtn').addEventListener('click', function() {
-                    console.log("Next BUtton clicked", currentIndex)
+                    console.log("Next Button clicked", currentIndex)
                     if (currentIndex + 3 < products_data.length) {
                         currentIndex += 3;
                         console.log("Inside Log", currentIndex)
@@ -280,22 +280,6 @@
                 });
             }
 
-          /*  document.getElementById('prevBtn').addEventListener('click', function() {
-                console.log("BUtton clicked")
-                if (currentIndex > 0) {
-                    currentIndex -= 3;
-                    render_recommended_products();
-                }
-            });
-        
-            document.getElementById('nextBtn').addEventListener('click', function() {
-                console.log("Next BUtton clicked", currentIndex)
-                if (currentIndex + 3 < products_data.length) {
-                    currentIndex += 3;
-                    console.log("Inside Log", currentIndex)
-                    render_recommended_products();
-                }
-            });*/
             
         </script> 
 
