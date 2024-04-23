@@ -157,19 +157,36 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static file serving.
 # https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-        "OPTIONS": {
-            "location": BASE_DIR / "media",
-        },
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
 
-CSRF_TRUSTED_ORIGINS = ['https://web-production-58829.up.railway.app','http://localhost:8000','http://127.0.0.1:8000','https://e-commerece.up.railway.app']
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'us-east-1' # e.g., us-east-1
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+
+if DEBUG:
+    PUBLIC_MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+            "OPTIONS": {
+                "location": BASE_DIR / "media",
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT=os.path.join(BASE_DIR,"media/")
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000','https://e-commerece.up.railway.app']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     'http://127.0.0.1:8000',
@@ -180,8 +197,6 @@ CORS_ORIGIN_ALLOW_ALL=True
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS = True
 # Base url to serve media files  
-MEDIA_URL = "/media/"
-MEDIA_ROOT=os.path.join(BASE_DIR,"media/")
   
 from datetime import timedelta
 
@@ -196,3 +211,4 @@ SIMPLE_JWT = {
 SITE_URL = 'http://localhost:8000'
 if os.environ.get('DJANGO_ENV') == 'production':
     SITE_URL = 'https://e-commerece.up.railway.app'
+    
