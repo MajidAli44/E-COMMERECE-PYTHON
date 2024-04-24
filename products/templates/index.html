@@ -75,9 +75,10 @@
             const API_BASE_URL = "{{ SITE_URL }}";
             const accessToken = localStorage.getItem("AccessToken");
             console.log("Access Token is--", accessToken)
-            const decodedToken = ''
-            if accessToken:
+            var decodedToken = ''
+            if (accessToken){
                 decodedToken = jwtDecode(accessToken);
+            } 
             let currentIndex = 0;
             window.onload = function() {
                 console.log("Onload is called----")
