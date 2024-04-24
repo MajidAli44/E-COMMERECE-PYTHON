@@ -47,7 +47,7 @@ class ProductVIewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Product instances.
     """
-    queryset = Products.objects.all()
+    queryset = Products.objects.filter(id__lte=1650).order_by('-id')[:10]         
     
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update',):
@@ -78,7 +78,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         queryset = self.queryset.select_related('product')\
         .values('product','product__title','product__unit_price','product__image')\
         .annotate(total_sum=Sum('quantity')).order_by('-total_sum')[:10]
-        return Response(queryset, context={'MEDIA_URL': settings.MEDIA_URL})
+        return Response(queryset)
 
 
 
@@ -146,90 +146,6 @@ def predict_price_view(request):
         # Render the HTML form
         return render(request, 'priceprediction.html')
 
-
-# knn_model = joblib.load('./model/knn_model.pkl')
-
-# # Load the VGG16 base model
-# base_model = VGG16(include_top=False, input_shape=(256, 256, 3))
-
-# from sklearn.neighbors import NearestNeighbors
-
-# from keras.preprocessing.image import load_img, img_to_array 
-
-# def preprocess_image(image):
-#     # Resize and preprocess the image
-#     image = image.resize((256, 256))
-#     image = img_preprocessing.img_to_array(image)
-#     image = np.expand_dims(image, axis=0)
-#     image = preprocess_input(image)
-#     return image
-
-# def load_image_from_url(url):
-#     response = requests.get(url)
-#     image = Image.open(io.BytesIO(response.content))
-#     return image
-
-# def extract_features(image):
-#     # Preprocess the image
-#     preprocessed_image = preprocess_image(image)
-#     # Extract features using the VGG16 base model
-#     features = base_model.predict(preprocessed_image)
-#     return features
-
-
-
-# def recommend_products(request, user_id):
-#     if request.method == 'GET':
-#         try:
-           
-#             order = Order.objects.filter(user=user_id).last()
-#         except Order.DoesNotExist:
-#             return JsonResponse({'error': 'Order not found'}, status=404)
-
-        
-#         previous_orders = Order.objects.filter(user=user_id)
-
-#         # Extract features from images of previous orders
-#         features = []
-#         for previous_order in previous_orders:
-#             image_url = previous_order.product.image.url
-#             url = settings.SITE_URL + image_url
-#             image = load_image_from_url(url)
-#             # Extract features from the image using the VGG16 base model
-#             image_features = extract_features(image)
-#             features.append(image_features)
-
-#         # print("Features", features)
-#         combined_features = np.concatenate(features, axis=0)
-#         # print("combine features",combined_features)
-        
-#         num_samples = combined_features.shape[0]
-#         flattened_features = combined_features.reshape(num_samples, -1)
-#         # print("flattened_features", flattened_features)
-        
-#         num_components = min(313, min(combined_features.shape))
-#         pca = PCA(n_components=num_components)
-#         reduced_features = pca.fit_transform(flattened_features)
-#         # print("reduced_features",reduced_features)
-        
-#         if reduced_features.shape[1] < 313:
-#             padding = np.zeros((num_samples, 313 - reduced_features.shape[1]))
-#             reduced_features = np.hstack((reduced_features, padding))
-
-        
-#         similar_product_ids = knn_model.predict(reduced_features)
-#         similar_products = list(ProductsInformation.objects.filter(id__in=similar_product_ids).values('gender', 'year'))
-#         print("Similiar products ID---", similar_products)
-#         return JsonResponse({'similar_product_ids': similar_products.tolist()})
-        
-
-
-
-
-
-
-
-
 # Load the KNN model
 knn_model = joblib.load('./model/knn_model.pkl')
 
@@ -291,7 +207,7 @@ def recommend_products(request, user_id):
 
         similar_product_ids = knn_model.predict(reduced_features)
         print(similar_product_ids)
-        similar_products = list(ProductsInformation.objects.filter(id__in=similar_product_ids).values('id','gender', 'usage', 'productdisplayname', 'link'))
+        similar_products = list(Products.objects.filter(id__in=similar_product_ids).values('id','unit_price', 'title', 'description', 'image'))
         
         return JsonResponse({'similar_product_ids': similar_products})
     elif request.method == 'POST':

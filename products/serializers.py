@@ -1,13 +1,23 @@
 from rest_framework import serializers
 from .models import *
 from authentication.serializers import UserSerializer
+from Eshop import settings
 
 class ProductReadSerializer(serializers.ModelSerializer):
     cart_set= serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
     class Meta:
         model = Products
         fields = ['id','title','unit_price','inventory','image','description','cart_set']
 
+    
+    def get_image(self,obj):
+        if obj.image:
+            if "http://assets.myntassets.com" in obj.image.name:
+                return obj.image.name
+            return "{0}{1}".format(settings.MEDIA_URL, obj.image.name)
+        return ""
+    
     def get_cart_set(self,obj):
         cart_products = obj.cart.all()
         user = self.context['request'].user.id

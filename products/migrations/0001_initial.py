@@ -49,26 +49,4 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
-
-        migrations.CreateModel(
-            name='ProductsInformation',
-            fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('gender', models.CharField(max_length=20)),
-                ('mastercategory', models.CharField(max_length=50)),
-                ('subcategory', models.CharField(max_length=50)),
-                ('articletype', models.CharField(max_length=50)),
-                ('basecolour', models.CharField(max_length=50)),
-                ('season', models.CharField(max_length=20)),
-                ('year', models.IntegerField()),
-                ('usage', models.CharField(max_length=50)),
-                ('productdisplayname', models.CharField(max_length=100)),
-                ('filename', models.CharField(max_length=255)),
-                ('link', models.CharField(max_length=255)),
-                ('file_found', models.BooleanField(default=False)),
-            ],
-            options={
-                'db_table': 'products_information',
-            },
-        ),
     ]
