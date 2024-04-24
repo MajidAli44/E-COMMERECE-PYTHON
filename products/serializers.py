@@ -4,11 +4,11 @@ from authentication.serializers import UserSerializer
 from Eshop import settings
 
 class ProductReadSerializer(serializers.ModelSerializer):
-    cart_set= serializers.SerializerMethodField()
+    # cart_set= serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     class Meta:
         model = Products
-        fields = ['id','title','unit_price','inventory','image','description','cart_set']
+        fields = ['id','title','unit_price','inventory','image','description']
 
     
     def get_image(self,obj):
@@ -18,19 +18,19 @@ class ProductReadSerializer(serializers.ModelSerializer):
             return "{0}{1}".format(settings.MEDIA_URL, obj.image.name)
         return ""
     
-    def get_cart_set(self,obj):
-        cart_products = obj.cart.all()
-        user = self.context['request'].user.id
-        cart_data = []
-        for cart_product in cart_products:
-            if cart_product.user.id == user:
-                cart_data.append({
-                    'id': cart_product.id,
-                    'product_id': cart_product.product.id,
-                    'user_id': cart_product.user.id
-                })
+    # def get_cart_set(self,obj):
+    #     cart_products = obj.cart.all()
+    #     user = self.context['request'].user.id
+    #     cart_data = []
+    #     for cart_product in cart_products:
+    #         if cart_product.user.id == user:
+    #             cart_data.append({
+    #                 'id': cart_product.id,
+    #                 'product_id': cart_product.product.id,
+    #                 'user_id': cart_product.user.id
+    #             })
         
-        return cart_data
+    #     return cart_data
     
 class ProductWriteSerializer(serializers.ModelSerializer):
     cart_set= serializers.SerializerMethodField()

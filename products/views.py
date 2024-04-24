@@ -216,9 +216,9 @@ def recommend_products(request, user_id):
 
         similar_product_ids = knn_model.predict(reduced_features)
         print(similar_product_ids)
-        similar_products = list(Products.objects.filter(id__in=similar_product_ids).values('id','unit_price', 'title', 'description', 'image'))
-        
-        return JsonResponse({'similar_product_ids': similar_products})
+        products = Products.objects.filter(id__in=similar_product_ids)
+        serializer = ProductReadSerializer(products, many=True)
+        return Response(serializer.data)
     
     elif request.method == 'POST':
         data = request.POST

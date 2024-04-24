@@ -73,7 +73,7 @@
 
         <script>
             const API_BASE_URL = "{{ SITE_URL }}";
-            const accessToken = localStorage.getItem("AccessToken");
+            var accessToken = localStorage.getItem("AccessToken");
             console.log("Access Token is--", accessToken)
             var decodedToken = ''
             if (accessToken){
@@ -196,6 +196,8 @@
             
             let products_data = [];
             function render_recommended_products() {
+                console.log("Products Data---", products_data)
+                console.log("length of Products Data---", products_data.length)
                 let tab = `
                     <h1>Recommended Products</h1>
                     <div class="row mt-0 align-items-center">
