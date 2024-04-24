@@ -15,6 +15,7 @@ urlpatterns = [
     path('cart/', CartPageView, name='cart_page'),
     path('checkout/', CheckoutPageView, name='checkout_page'),
     path('predict/', predict_price_view, name='predict_price_view'),
+    path('token', check_token, name='predict_price_view'),
     path('recommended/products/<user_id>', recommend_products, name='predict_price_view'),
     path('', include(router.urls)),
 ]

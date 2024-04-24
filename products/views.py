@@ -176,7 +176,7 @@ def extract_features(image):
     return features
 
 @api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
+# @permission_classes((IsAuthenticated, ))
 def recommend_products(request, user_id):
     if request.method == 'GET':
         try:
@@ -227,3 +227,37 @@ def recommend_products(request, user_id):
     else:
         # Handle other HTTP methods
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+# from .utils import is_token_valid # Assuming the function is in a utils.py file
+
+
+
+from rest_framework.authtoken.models import Token
+
+def is_token_valid(token_key):
+    """
+    Check if the provided token_key is valid.
+
+    Args:
+    token_key (str): The token key to check.
+
+    Returns:
+    bool: True if the token is valid, False otherwise.
+    """
+    try:
+        token = Token.objects.get(key=token_key)
+        return True
+    except Token.DoesNotExist:
+        return False
+    
+@api_view(['GET'])
+def check_token(request):
+    print("called")
+    token_key = request.GET.get('token')
+    if is_token_valid(token_key):
+        return JsonResponse({'valid': True})
+    else:
+        return JsonResponse({'valid': False})
