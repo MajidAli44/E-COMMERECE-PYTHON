@@ -221,27 +221,24 @@
                             <div class="d-flex flex-wrap">`;
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
+                    const imageUrl = d.image;
                     console.log("image is url--", d.image)
                        
-                    fetchInsecureContent(d.image).then(blobUrl => {
-                        if (blobUrl) {
-                            tab += `
-                                <div class="col-lg-4 m-0">
-                                    <div class="p-4 rounded bg-light m-lg-2">
-                                        <div class="row align-items-center">
-                                            <div class="col-6">
-                                                <img src="${blobUrl}" class="img-fluid rounded-circle w-100" alt="">
-                                            </div>
-                                            <div class="col-6">
-                                                <a href="#" class="h5">${d.title}</a>
-                                                <h4 class="mb-3">${d.unit_price}$</h4>
-                                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            </div>
-                                        </div>
+                    tab += `
+                        <div class="col-lg-4 m-0">
+                            <div class="p-4 rounded bg-light m-lg-2">
+                                <div class="row align-items-center">
+                                    <div class="col-6">
+                                        <img src="${imageUrl}" class="img-fluid rounded-circle w-100" alt="">
                                     </div>
-                                </div>`;
-                        }
-                    });
+                                    <div class="col-6">
+                                        <a href="#" class="h5">${d.title}</a>
+                                        <h4 class="mb-3">${d.unit_price}$</h4>
+                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
                 }
                 tab += `
                             </div>
