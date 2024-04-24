@@ -14,6 +14,8 @@ from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes,api_view
 
 
 from sklearn.decomposition import PCA
@@ -32,6 +34,7 @@ from PIL import Image
 import io
 from Eshop import settings
 
+
 # Create your views here.
 
 def IndexPageView(request):
@@ -47,7 +50,7 @@ class ProductVIewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Product instances.
     """
-    queryset = Products.objects.filter(id__lte=1650).order_by('-id')[:10]         
+    queryset = Products.objects.filter(id__lte=1650).order_by('id')[:10]         
     
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update',):
@@ -172,7 +175,8 @@ def extract_features(image):
     features = base_model.predict(preprocessed_image)
     return features
 
-@csrf_exempt
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def recommend_products(request, user_id):
     if request.method == 'GET':
         try:
@@ -181,13 +185,18 @@ def recommend_products(request, user_id):
             return JsonResponse({'error': 'Order not found'}, status=404)
 
         previous_orders = Order.objects.filter(user=user_id)
-
+        user = request.user
+        print("User is---",user)
         # Extract features from images of previous orders
         features = []
         for previous_order in previous_orders:
-            image_url = previous_order.product.image.url
-            url = settings.SITE_URL + image_url
-            image = load_image_from_url(url)
+            imageUrl = ''
+            url = previous_order.product.image.name
+            if "http://assets.myntassets.com" in url:
+                imageUrl = url
+            else:
+                imageUrl = settings.SITE_URL + url
+            image = load_image_from_url(imageUrl)
             # Extract features from the image using the VGG16 base model
             image_features = extract_features(image)
             features.append(image_features)
@@ -210,8 +219,8 @@ def recommend_products(request, user_id):
         similar_products = list(Products.objects.filter(id__in=similar_product_ids).values('id','unit_price', 'title', 'description', 'image'))
         
         return JsonResponse({'similar_product_ids': similar_products})
+    
     elif request.method == 'POST':
-        # Retrieve data from the POST request
         data = request.POST
         return JsonResponse({'received_data': data})
 
