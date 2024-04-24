@@ -17,5 +17,6 @@ urlpatterns = [
     path('predict/', predict_price_view, name='predict_price_view'),
     path('token', check_token, name='predict_price_view'),
     path('recommended/products/<user_id>', recommend_products, name='predict_price_view'),
+    path('image-proxy/', image_proxy, name='image_proxy'),
     path('', include(router.urls)),
 ]

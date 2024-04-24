@@ -22,7 +22,7 @@ from sklearn.decomposition import PCA
 from django.db.models import Q
 from django.shortcuts import render
 from .models import Order, Products
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse 
 from django.views.decorators.csrf import csrf_exempt
 import json
 import joblib
@@ -33,6 +33,8 @@ import requests
 from PIL import Image
 import io
 from Eshop import settings
+import requests
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -261,3 +263,23 @@ def check_token(request):
         return JsonResponse({'valid': True})
     else:
         return JsonResponse({'valid': False})
+    
+    
+
+def image_proxy(request):
+    # Get the URL of the image from the request query parameters
+    image_url = request.GET.get('url', '')
+
+    # Fetch the image from the HTTP server using requests library
+    response = requests.get(image_url, stream=True)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Set the content type based on the response headers
+        content_type = response.headers.get('content-type', 'image/jpeg')
+        
+        # Return the image content with appropriate content type
+        return HttpResponse(response.content, content_type=content_type)
+    else:
+        # If the request failed, return an empty response or handle the error as needed
+        return HttpResponse(status=response.status_code)
