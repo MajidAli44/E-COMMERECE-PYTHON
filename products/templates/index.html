@@ -200,6 +200,8 @@
                     if (!response.ok) {
                         throw new Error('Failed to fetch image via proxy');
                     }
+                    console.log("OK Fetch")
+                    console.log("Response is---", response)
                     const blob = await response.blob();
                     return URL.createObjectURL(blob);
                 } catch (error) {

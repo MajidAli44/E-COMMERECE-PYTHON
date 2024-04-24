@@ -263,8 +263,6 @@ def check_token(request):
         return JsonResponse({'valid': True})
     else:
         return JsonResponse({'valid': False})
-    
-    
 
 def image_proxy(request):
     # Get the URL of the image from the request query parameters
