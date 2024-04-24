@@ -8,6 +8,7 @@ from .views import predict_price_view
 router = DefaultRouter()
 router.register(r'', ProductVIewSet, basename='products')
 router.register(r'order', OrderViewSet, basename="Orders")
+router.register(r'carts', CartViewSet, basename="carts")
 
 
 urlpatterns = [

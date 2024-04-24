@@ -52,7 +52,7 @@ class ProductVIewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Product instances.
     """
-    queryset = Products.objects.filter(id__lte=1650).order_by('id')[:10]         
+    queryset = Products.objects.filter(id__lte=1850).order_by('id')[:20]         
     
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update',):
@@ -194,7 +194,9 @@ def recommend_products(request, user_id):
         for previous_order in previous_orders:
             imageUrl = ''
             url = previous_order.product.image.name
+            print("Image URL OF ", url)
             if "http://assets.myntassets.com" in url:
+                print("image assest found")
                 imageUrl = url
             else:
                 imageUrl = settings.SITE_URL + url
@@ -204,8 +206,8 @@ def recommend_products(request, user_id):
             features.append(image_features)
 
         combined_features = np.concatenate(features, axis=0)
-        
         num_samples = combined_features.shape[0]
+        print("num samples---", num_samples)
         flattened_features = combined_features.reshape(num_samples, -1)
         
         num_components = min(313, min(combined_features.shape))
@@ -215,11 +217,12 @@ def recommend_products(request, user_id):
         if reduced_features.shape[1] < 313:
             padding = np.zeros((num_samples, 313 - reduced_features.shape[1]))
             reduced_features = np.hstack((reduced_features, padding))
-
+        print("Befire model prediction")
         similar_product_ids = knn_model.predict(reduced_features)
-        print(similar_product_ids)
+        print("ID predicted",similar_product_ids)
         products = Products.objects.filter(id__in=similar_product_ids)
         serializer = ProductReadSerializer(products, many=True)
+        print("Before serializer------")
         return Response(serializer.data)
     
     elif request.method == 'POST':
@@ -264,10 +267,12 @@ def check_token(request):
     else:
         return JsonResponse({'valid': False})
 
+@api_view(['GET'])
 def image_proxy(request):
     # Get the URL of the image from the request query parameters
+    print("Requested data---",request.GET)
     image_url = request.GET.get('url', '')
-
+    print("imag url is----", image_url)
     # Fetch the image from the HTTP server using requests library
     response = requests.get(image_url, stream=True)
 
