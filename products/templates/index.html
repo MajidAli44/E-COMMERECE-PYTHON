@@ -120,12 +120,12 @@
                             console.log("Image of product", d.image)
                             console.log("type of Image of product", typeof d.image)                       
                             tab += `                            
-                                    <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 630px; overflow: hidden;">
                                         <div class="rounded position-relative fruite-item">
                                             <div class="fruite-img">
-                                                <img src="${d.image}" class="img-fluid w-100 rounded-top" alt="">
+                                                <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
                                             </div>
-                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
                                                 <h4>${d.title}</h4>
                                                 <p style="text-align:justify;">${Description}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
