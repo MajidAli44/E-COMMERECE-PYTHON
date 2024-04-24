@@ -193,6 +193,19 @@
                     console.error("Error:", error);
                 });
             }
+            async function fetchInsecureContent(url) {
+                try {
+                    const response = await fetch(url, { mode: 'no-cors' }); // Fetch the insecure content
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const blob = await response.blob(); // Convert the response to a Blob
+                    return URL.createObjectURL(blob); // Create a URL for the Blob
+                } catch (error) {
+                    console.error('There was a problem fetching the insecure content:', error);
+                    return null;
+                }
+            }
             
             let products_data = [];
             function render_recommended_products() {
@@ -209,23 +222,26 @@
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
                     console.log("image is url--", d.image)
-                    console.log("type of before of product", typeof d.product__image)
                        
-                    tab += `
-                        <div class="col-lg-4 m-0">
-                            <div class="p-4 rounded bg-light m-lg-2">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <img src="${d.image}" class="img-fluid rounded-circle w-100" alt="">
+                    fetchInsecureContent(d.image).then(blobUrl => {
+                        if (blobUrl) {
+                            tab += `
+                                <div class="col-lg-4 m-0">
+                                    <div class="p-4 rounded bg-light m-lg-2">
+                                        <div class="row align-items-center">
+                                            <div class="col-6">
+                                                <img src="${blobUrl}" class="img-fluid rounded-circle w-100" alt="">
+                                            </div>
+                                            <div class="col-6">
+                                                <a href="#" class="h5">${d.title}</a>
+                                                <h4 class="mb-3">${d.unit_price}$</h4>
+                                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <a href="#" class="h5">${d.title}</a>
-                                        <h4 class="mb-3">${d.unit_price}$</h4>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
+                                </div>`;
+                        }
+                    });
                 }
                 tab += `
                             </div>
