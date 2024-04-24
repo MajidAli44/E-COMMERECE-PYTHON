@@ -130,11 +130,11 @@
                                                 <p style="text-align:justify;">${Description}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
-                                                        if (d.cart_set.length == 0)
-                                                        {
+                                                        //if (d.cart_set.length == 0)
+                                                     //   {
                                                             tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> `
                                                             
-                                                        }
+                                                      //  }
                                                 tab +=    `</div>
                                             </div>
                                         </div>
@@ -208,7 +208,7 @@
                             <div class="d-flex flex-wrap">`;
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
-                    console.log("image is url--", d.product__image)
+                    console.log("image is url--", d.image)
                     console.log("type of before of product", typeof d.product__image)
                        
                     tab += `
@@ -216,11 +216,11 @@
                             <div class="p-4 rounded bg-light m-lg-2">
                                 <div class="row align-items-center">
                                     <div class="col-6">
-                                        <img src="${d.product__image}" class="img-fluid rounded-circle w-100" alt="">
+                                        <img src="${d.image}" class="img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <div class="col-6">
-                                        <a href="#" class="h5">${d.product__title}</a>
-                                        <h4 class="mb-3">${d.product__unit_price}$</h4>
+                                        <a href="#" class="h5">${d.title}</a>
+                                        <h4 class="mb-3">${d.unit_price}$</h4>
                                         <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
                                     </div>
                                 </div>
