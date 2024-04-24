@@ -193,22 +193,23 @@
                     console.error("Error:", error);
                 });
             }
-            async function fetchInsecureContent(url) {
+
+            async function fetchImageViaProxy(imageUrl) {
                 try {
-                    const response = await fetch(url, { mode: 'no-cors' }); // Fetch the insecure content
+                    const response = await fetch(`${API_BASE_URL}/products/image-proxy?url=${encodeURIComponent(imageUrl)}`, { method: 'GET' });
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Failed to fetch image via proxy');
                     }
-                    const blob = await response.blob(); // Convert the response to a Blob
-                    return URL.createObjectURL(blob); // Create a URL for the Blob
+                    const blob = await response.blob();
+                    return URL.createObjectURL(blob);
                 } catch (error) {
-                    console.error('There was a problem fetching the insecure content:', error);
+                    console.error('Error fetching image via proxy:', error);
                     return null;
                 }
             }
-            
+
             let products_data = [];
-            function render_recommended_products() {
+            async function render_recommended_products() {
                 console.log("Products Data---", products_data)
                 console.log("length of Products Data---", products_data.length)
                 let tab = `
@@ -221,8 +222,8 @@
                             <div class="d-flex flex-wrap">`;
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
-                    const imageUrl = d.image;
-                    console.log("image is url--", d.image)
+                    const imageUrl = await fetchImageViaProxy(d.image);
+                    console.log("image is url--", imageUrl)
                        
                     tab += `
                         <div class="col-lg-4 m-0">
