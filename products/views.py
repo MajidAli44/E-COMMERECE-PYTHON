@@ -229,7 +229,8 @@ def recommend_products(request, user_id):
             reduced_features = np.hstack((reduced_features, padding))
         print("Befire model prediction")
         # similar_product_ids = knn_model.predict(reduced_features)
-        distances, indices = knn_model.kneighbors(reduced_features)
+        num_neighbors = 3
+        distances, indices = knn_model.kneighbors(reduced_features, n_neighbors=num_neighbors)
         similar_product_ids = indices.flatten()
         print("ID predicted",similar_product_ids)
         products = Products.objects.filter(id__in=similar_product_ids)

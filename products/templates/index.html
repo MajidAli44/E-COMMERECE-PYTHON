@@ -150,7 +150,12 @@
             }
             
             function addToCartClicked(pid,price) {
-                // Decode the JWT access token using cdn
+
+                var accessToken = localStorage.getItem("AccessToken");
+                if (!accessToken) {
+                    alert("Please login for the order")
+                    window.location.href = `${API_BASE_URL}/auth/loginPage`;
+                } 
                 console.log("Cart API called-----")
                 const userId = decodedToken.user_id;
                 const data = {
