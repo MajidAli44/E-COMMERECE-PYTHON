@@ -35,6 +35,7 @@ import io
 from Eshop import settings
 import requests
 from django.http import HttpResponse
+from rest_framework import generics
 
 
 # Create your views here.
@@ -60,6 +61,12 @@ class ProductVIewSet(viewsets.ModelViewSet):
         return ProductReadSerializer
     
 
+class OrderCreation(generics.CreateAPIView):
+    serializer_class = OrderWriteSerializer
+    queryset = Order.objects.all()
+
+
+
 class CartViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Cart instances.
@@ -67,23 +74,26 @@ class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
     
+
+    
 class OrderViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Cart instances.
     """
+    serializer_class = OrderWriteSerializer
     queryset = Order.objects.all()
-    def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update'):
-            return OrderWriteSerializer
-        return OrderReadSerializer
+    # def get_serializer_class(self):
+    #     if self.action in ('create', 'update', 'partial_update'):
+    #         return OrderWriteSerializer
+    #     return OrderReadSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=['get'])
-    def recommended_product(self, request):    
-        queryset = self.queryset.select_related('product')\
-        .values('product','product__title','product__unit_price','product__image')\
-        .annotate(total_sum=Sum('quantity')).order_by('-total_sum')[:10]
-        return Response(queryset)
+    # @action(detail=False, methods=['get'])
+    # def recommended_product(self, request):    
+    #     queryset = self.queryset.select_related('product')\
+    #     .values('product','product__title','product__unit_price','product__image')\
+    #     .annotate(total_sum=Sum('quantity')).order_by('-total_sum')[:10]
+    #     return Response(queryset)
 
 
 

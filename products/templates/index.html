@@ -132,7 +132,7 @@
                                                     <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
                                                         //if (d.cart_set.length == 0)
                                                      //   {
-                                                            tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> `
+                                                            tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> `
                                                             
                                                       //  }
                                                 tab +=    `</div>
@@ -149,25 +149,26 @@
                 });
             }
             
-            function addToCartClicked(pid) {
+            function addToCartClicked(pid,price) {
                 // Decode the JWT access token using cdn
+                console.log("Cart API called-----")
                 const userId = decodedToken.user_id;
                 const data = {
-                    quantity: '1',
+                    quantity: 1,
                     product: pid,
                     user: userId,
+                    price:price
                 };
                 
                 // Convert the JSON object to a string
                 const body = JSON.stringify(data);
 
-                var methodname = "POST";
-                var url = `${API_BASE_URL}/products/order`;
-            
+                var url = `${API_BASE_URL}/products/listing/`;
+                console.log("Final Cart URL---", url)
                 accesstoken = localStorage.getItem("AccessToken");
             
                 let options = {
-                    method: methodname,
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + accesstoken,
@@ -186,6 +187,8 @@
                 }).then(data => {
                     if (data) {
                         console.log("responce----", data)
+                        alert("Thank you for Ordering")
+                        show_recomended_products();
                     } else {
                         console.log("API request failed or did not indicate success.");
                     }

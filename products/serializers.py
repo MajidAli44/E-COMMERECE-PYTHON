@@ -55,4 +55,4 @@ class OrderReadSerializer(serializers.ModelSerializer):
 class OrderWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ('id','user','billing','price','product','quantity','date')      
+        fields = '__all__'      

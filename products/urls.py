@@ -7,7 +7,7 @@ from .views import predict_price_view
 
 router = DefaultRouter()
 router.register(r'', ProductVIewSet, basename='products')
-router.register(r'order', OrderViewSet, basename="Orders")
+router.register(r'order/', OrderViewSet, basename="Orders")
 router.register(r'carts', CartViewSet, basename="carts")
 
 
@@ -19,5 +19,6 @@ urlpatterns = [
     path('token', check_token, name='predict_price_view'),
     path('recommended/products/<user_id>', recommend_products, name='predict_price_view'),
     path('image-proxy/', image_proxy, name='image_proxy'),
-    path('', include(router.urls)),
+    path('listing/', OrderCreation.as_view(), name='listing'),
+    path('', include(router.urls))
 ]
