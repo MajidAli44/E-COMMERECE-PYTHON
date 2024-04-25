@@ -1854,11 +1854,11 @@ progress {
   height: 1.5em;
 }
 .form-control::-moz-placeholder {
-  color: #6c757d;
+  color: #aab7c4;
   opacity: 1;
 }
 .form-control::placeholder {
-  color: #6c757d;
+  color: #aab7c4;
   opacity: 1;
 }
 .form-control:-moz-read-only {

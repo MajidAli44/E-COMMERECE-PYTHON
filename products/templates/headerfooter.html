@@ -144,7 +144,7 @@
                 style="margin-left: 10px"
                 href="{% url 'signup_page' %}"
                 role="button"
-                >SignUp</a
+                >Sign up</a
               >
               {% comment %}
               <a href="{% url 'login_page' %}" class="my-auto">
@@ -286,7 +286,7 @@
         tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'login_page' %}" role="button" onclick=logout_user() >Logout</a>`;
       } else {
         tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'login_page' %}" role="button">Login</a>
-               <a class="btn btn-primary btn-lg text-light" style="margin-left: 10px;" href="{% url 'signup_page' %}" role="button">SignUp</a>`;
+               <a class="btn btn-primary btn-lg text-light" style="margin-left: 10px;" href="{% url 'signup_page' %}" role="button">Sign up</a>`;
       }
 
       document.getElementById("Auth-Tabs").innerHTML = tab;
