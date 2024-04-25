@@ -81,7 +81,7 @@
                 if (!res.ok) {
                     return res.json().then(errorData => {
                         console.error("API request failed:", errorData);
-                        throw new Error("Network response was not OK");
+                        alert("Provide Correct email or password")
                     });
                 }
 

@@ -270,18 +270,20 @@
     <!-- Footer End -->
     <script>
       console.log("Header Page Testing");
+      const BASE_URL = "{{ SITE_URL }}";
       accesstoken = localStorage.getItem("AccessToken");
       
       function logout_user(){
         console.log("Function is called");        
         localStorage.clear();
-        let redirectUrl = "http://127.0.0.1:8000/products/index/";
+        window.location.href = `${BASE_URL}`;
     }
 
       let tab = "";
       if (accesstoken) {
         tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'login_page' %}" role="button" onclick=logout_user() >Logout</a>`;
       } else {
+        console.log("Access token is not set")
         tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'login_page' %}" role="button">Login</a>
                <a class="btn btn-primary btn-lg text-light" style="margin-left: 10px;" href="{% url 'signup_page' %}" role="button">Sign up</a>`;
       }

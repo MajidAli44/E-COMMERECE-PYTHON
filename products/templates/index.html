@@ -65,9 +65,9 @@
                                         <nav aria-label="Page navigation example">
                                             <div class="row float-end mt-5">
                                                 <ul class="pagination d-flex w-25" id="paginationControls">
-                                                    <li class="page-item" id="prevPageBtn"><a class="page-link" href="#">Previous</a></li>
+                                                    {% comment %} <li class="page-item" id="prevPageBtn"><a class="page-link" href="#">Previous</a></li>
                                                     <!-- Page numbers will be dynamically inserted here -->
-                                                    <li class="page-item" id="nextPageBtn"><a class="page-link" href="#">Next</a></li>
+                                                    <li class="page-item" id="nextPageBtn"><a class="page-link" href="#">Next</a></li> {% endcomment %}
                                                 </ul>
                                             </div>
                                         </nav> 
@@ -101,9 +101,10 @@
 
 
             function updatePaginationControls(totalPages, currentPage) {
-                const prevBtn = document.getElementById('prevPageBtn');
-                const nextBtn = document.getElementById('nextPageBtn');
+             //   const prevBtn = document.getElementById('prevPageBtn');
+              //  const nextBtn = document.getElementById('nextPageBtn');
                 const paginationControls = document.getElementById('paginationControls');
+                paginationControls.innerHTML = '';
 
             
                 // Clear existing page numbers
@@ -121,6 +122,16 @@
                 }
                 console.log("total pages----", startPage)
                 console.log("current page----", endPage)
+
+                const prevBtn = document.createElement('li');
+                prevBtn.className = 'page-item';
+                const prevBtnLink = document.createElement('a');
+                prevBtnLink.className = 'page-link';
+                prevBtnLink.href = '#';
+                prevBtnLink.textContent = 'Previous';
+                prevBtn.appendChild(prevBtnLink);
+                paginationControls.appendChild(prevBtn);
+
                 for (let i = startPage; i <= endPage; i++) {
                     const li = document.createElement('li');
                     li.className = 'page-item';
@@ -139,7 +150,15 @@
 
                     paginationControls.appendChild(li);
                 }
-            
+                
+                const nextBtn = document.createElement('li');
+                nextBtn.className = 'page-item';
+                const nextBtnLink = document.createElement('a');
+                nextBtnLink.className = 'page-link';
+                nextBtnLink.href = '#';
+                nextBtnLink.textContent = 'Next';
+                nextBtn.appendChild(nextBtnLink);
+                paginationControls.appendChild(nextBtn);
                 // Enable/disable Previous and Next buttons
                 prevBtn.addEventListener('click', (e) => {
                     e.preventDefault();

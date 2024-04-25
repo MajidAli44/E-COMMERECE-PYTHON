@@ -53,7 +53,7 @@ def CheckoutPageView(request):
     return render(request, "checkout.html")
 
 class ProductPagination(PageNumberPagination):
-    page_size = 12 
+    page_size = 20
 
 class ProductVIewSet(viewsets.ModelViewSet):
     """
