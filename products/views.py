@@ -36,6 +36,9 @@ from Eshop import settings
 import requests
 from django.http import HttpResponse
 from rest_framework import generics
+import requests
+from django.core.paginator import Paginator
+from rest_framework.pagination import PageNumberPagination
 
 
 # Create your views here.
@@ -49,16 +52,29 @@ def CartPageView(request):
 def CheckoutPageView(request):
     return render(request, "checkout.html")
 
+class ProductPagination(PageNumberPagination):
+    page_size = 12 
+
 class ProductVIewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Product instances.
     """
-    queryset = Products.objects.filter(id__lte=1850).order_by('id')[:20]         
+    queryset = Products.objects.all() 
+    pagination_class = ProductPagination        
     
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update',):
             return ProductWriteSerializer
         return ProductReadSerializer
+    
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        total_pages = response.data['count'] // self.pagination_class.page_size
+        if response.data['count'] % self.pagination_class.page_size > 0:
+            total_pages += 1
+        response.data['currentPage'] = self.paginator.page.number
+        response.data['totalPages'] = total_pages
+        return response
     
 
 class OrderCreation(generics.CreateAPIView):

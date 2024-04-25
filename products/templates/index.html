@@ -61,9 +61,19 @@
                                 <div class="row g-4">
                                     <div class="col-lg-12">
                                         <div class="row g-4" id="products">                                            
-                                        </div> 
+                                        </div>
+                                        <nav aria-label="Page navigation example">
+                                            <div class="row float-end mt-5">
+                                                <ul class="pagination d-flex w-25" id="paginationControls">
+                                                    <li class="page-item" id="prevPageBtn"><a class="page-link" href="#">Previous</a></li>
+                                                    <!-- Page numbers will be dynamically inserted here -->
+                                                    <li class="page-item" id="nextPageBtn"><a class="page-link" href="#">Next</a></li>
+                                                </ul>
+                                            </div>
+                                        </nav> 
                                     </div>
-                                </div>              
+                                </div>
+
                             </div>
                         </div>
                     </div>      
@@ -88,9 +98,133 @@
                 }
 
             };
-               
+
+
+            function updatePaginationControls(totalPages, currentPage) {
+                const prevBtn = document.getElementById('prevPageBtn');
+                const nextBtn = document.getElementById('nextPageBtn');
+                const paginationControls = document.getElementById('paginationControls');
+
             
-            function ShowProducts() {
+                // Clear existing page numbers
+                while (paginationControls.firstChild) {
+                    paginationControls.removeChild(paginationControls.firstChild);
+                }
+            
+                // Add page numbers
+                console.log("before cuurent page---", currentPage)
+                let startPage = Math.max(1, currentPage - 1);
+                let endPage = Math.min(totalPages, currentPage + 1);
+                if(startPage == 1 && endPage == 2){
+                    console.log("start page",)
+                    endPage = endPage + 1
+                }
+                console.log("total pages----", startPage)
+                console.log("current page----", endPage)
+                for (let i = startPage; i <= endPage; i++) {
+                    const li = document.createElement('li');
+                    li.className = 'page-item';
+                    if (i === currentPage) {
+                        li.classList.add('active');
+                    }
+                    const a = document.createElement('a');
+                    a.className = 'page-link';
+                    a.href = '#';
+                    a.textContent = i;
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        ShowProducts(i);
+                    });
+                    li.appendChild(a);
+
+                    paginationControls.appendChild(li);
+                }
+            
+                // Enable/disable Previous and Next buttons
+                prevBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        ShowProducts(currentPage - 1);
+                    }
+                });
+                nextBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                        ShowProducts(currentPage + 1);
+                    }
+                });
+            }
+            
+
+
+               
+            let currentPage = 1; // Initialize the current page
+            const itemsPerPage = 20; // Number of items per page
+
+            
+            function ShowProducts(page = currentPage) {
+                console.log("Show products is called----")
+                
+                var url = `${API_BASE_URL}/products/?page=${page}`;
+                let options = {
+                    method: "GET",
+                };
+                let fetchRes = fetch(url, options);
+                fetchRes.then(res => {
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            console.error("API request failed:", errorData);
+                            throw new Error("Network response was not OK");
+                        });
+                    }
+                    return res.json(); // Return the JSON data promise
+                }).then(data => {
+                    if (data) {
+                        console.log("responce----", data)
+                        let tab = " ";
+                        for (let d of data.results) {   
+                            let Description = d.description.split(' ').slice(0, 10).join(' ');
+                            if (d.description.split(' ').length > 10) {
+                                Description += '...';
+                            } 
+                            console.log("Image of product", d.image)
+                            console.log("type of Image of product", typeof d.image)                       
+                            tab += `                            
+                                    <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 630px; overflow: hidden;">
+                                        <div class="rounded position-relative fruite-item">
+                                            <div class="fruite-img">
+                                                <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
+                                            </div>
+                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
+                                                <h4>${d.title}</h4>
+                                                <p style="text-align:justify;">${Description}</p>
+                                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                                    <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
+                                                        //if (d.cart_set.length == 0)
+                                                     //   {
+                                                            tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> `
+                                                            
+                                                      //  }
+                                                tab +=    `</div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                        }    
+                        document.getElementById("products").innerHTML = tab; 
+                        console.log("pages is---", data.totalPages)
+                        console.log("totoal data pages is---", data)
+                        updatePaginationControls(data.totalPages, page); // Update pagination controls
+                    } else {
+                        console.log("API request failed or did not indicate success.");
+                    }
+                }).catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+            
+
+            
+         /*   function ShowProducts() {
                 console.log("Show products is called----")
                 
                 var url = `${API_BASE_URL}/products/`;
@@ -147,7 +281,7 @@
                 }).catch(error => {
                     console.error("Error:", error);
                 });
-            }
+            }*/
             
             function addToCartClicked(pid,price) {
 
