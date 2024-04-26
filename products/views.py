@@ -82,10 +82,13 @@ class ProductRetrieve(generics.RetrieveAPIView):
     template_name = "ProductDetail.html"
     
     def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
         instance = self.get_object()
         serializer = self.get_serializer(instance)
+        print("ID is--", serializer.data.id)
+        history = UserHistory.objects.create(product = serializer.data.id, user = User.objects.get(id=pk))
+        history.save()
         return render(request, self.template_name, {'data': serializer.data})
-    
     
 
 class OrderCreation(generics.CreateAPIView):
@@ -223,7 +226,7 @@ def recommend_products(request, user_id):
         except Order.DoesNotExist:
             return JsonResponse({'error': 'Order not found'}, status=404)
 
-        previous_orders = Order.objects.filter(user=user_id)
+        previous_orders = Order.objects.filter(user=user_id).latest()
         user = request.user
         print("User is---",user)
         # Extract features from images of previous orders
@@ -272,51 +275,13 @@ def recommend_products(request, user_id):
     else:
         # Handle other HTTP methods
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
-    
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
-# from .utils import is_token_valid # Assuming the function is in a utils.py file
-
-
-
-from rest_framework.authtoken.models import Token
-
-def is_token_valid(token_key):
-    """
-    Check if the provided token_key is valid.
-
-    Args:
-    token_key (str): The token key to check.
-
-    Returns:
-    bool: True if the token is valid, False otherwise.
-    """
-    try:
-        token = Token.objects.get(key=token_key)
-        return True
-    except Token.DoesNotExist:
-        return False
-    
-@api_view(['GET'])
-def check_token(request):
-    print("called")
-    token_key = request.GET.get('token')
-    if is_token_valid(token_key):
-        return JsonResponse({'valid': True})
-    else:
-        return JsonResponse({'valid': False})
-
+       
 @api_view(['GET'])
 def image_proxy(request):
-    # Get the URL of the image from the request query parameters
-    print("Requested data---",request.GET)
     image_url = request.GET.get('url', '')
-    print("imag url is----", image_url)
     # Fetch the image from the HTTP server using requests library
     response = requests.get(image_url, stream=True)
 
-    # Check if the request was successful
     if response.status_code == 200:
         # Set the content type based on the response headers
         content_type = response.headers.get('content-type', 'image/jpeg')

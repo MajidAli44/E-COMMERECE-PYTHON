@@ -45,3 +45,10 @@ class Order(models.Model):
     price = models.IntegerField()
     quantity = models.PositiveSmallIntegerField()
     placed_at = models.DateTimeField(auto_now_add=True)
+    
+
+class UserHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    
+    

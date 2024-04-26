@@ -58,6 +58,8 @@
 
     <script>
         const API_BASE_URL = "{{ SITE_URL }}";
+        var Token = localStorage.getItem("AccessToken"," ");
+        console.log("Access token of login---", Token)
         let token;
         let accessToken;
         let refreshToken;

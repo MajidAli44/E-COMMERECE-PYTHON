@@ -225,7 +225,10 @@
                                     </div>`;
                         }    
                         document.getElementById("products").innerHTML = tab; 
-                        updatePaginationControls(data.totalPages, page); // Update pagination controls
+                        if(data.results){
+                            updatePaginationControls(data.totalPages, page); // Update pagination controls
+                        }
+                        
                     } else {
                         console.log("API request failed or did not indicate success.");
                     }

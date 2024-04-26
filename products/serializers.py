@@ -8,7 +8,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     class Meta:
         model = Products
-        fields = ['id','title','unit_price','inventory','image','description']
+        fields = ['id','title','unit_price','image','description']
 
     
     def get_image(self,obj):
@@ -37,7 +37,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Products
-        fields = ['title','unit_price','inventory','image','description','cart_set']
+        fields = ['title','unit_price','image','description','cart_set']
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
