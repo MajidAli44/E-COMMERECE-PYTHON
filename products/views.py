@@ -291,3 +291,44 @@ def image_proxy(request):
     else:
         # If the request failed, return an empty response or handle the error as needed
         return HttpResponse(status=response.status_code)
+    
+
+
+
+
+
+import pickle
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import Product
+
+# Load your model and encoders 
+loaded_model = pickle.load(open('./model/knn_model_features_base.pkl', 'rb'))
+loaded_encoders = pickle.load(open('./model/ncoders_features_base.pkl', 'rb'))
+
+features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
+
+class PredictIDView(APIView):
+    def post(self, request):
+        # Get data from the request
+        data = request.data
+        new_df = pd.DataFrame([data])
+
+        # Encode features
+        for feature in features:
+            new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
+
+        # Predict and filter IDs
+        distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
+        valid_ids = []
+        for i in range(len(indices[0])):
+            neighbor_index = indices[0][i]
+            # Get neighbor ID from the database
+            neighbor_id = Product.objects.all()[neighbor_index].id  
+
+            # Check if ID is valid
+            if Product.objects.filter(id=neighbor_id).exists():
+                valid_ids.append(neighbor_id)
+
+        # Return predicted IDs as JSON response
+        return Response({"predicted_ids": valid_ids})
