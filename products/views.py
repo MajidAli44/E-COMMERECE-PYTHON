@@ -303,45 +303,108 @@ from rest_framework.response import Response
 from .models import Products
 
 # Load your model and encoders 
-loaded_model = pickle.load(open('./model/knn_model_features_base.pkl', 'rb'))
-loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
+# loaded_model = pickle.load(open('./model/knn_model_features_base.pkl', 'rb'))
+# loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
 
+# features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
+
+# def Recommend_product(request,user_id):
+#     previous_orders = Order.objects.filter(user=user_id).last()
+#     print("Last order----", previous_orders.product.id)
+#     print("Last order----", previous_orders.product.gender)
+#     print("Last order----", previous_orders.product.title)
+#     product = previous_orders.product
+#     new_data = {  # Replace with your actual new data point
+#         'gender': product.gender,
+#         'masterCategory': product.mastercategory,
+#         'subCategory': product.subcategory,
+#         'articleType': product.articletype,
+#         'season': product.season
+#     }
+#     print("New data---", new_data)
+#     # data = request.data
+#     new_df = pd.DataFrame([new_data])
+#     print("Dataframe---", new_df)
+#     for feature in features:
+#         new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
+
+#         # Predict and filter IDs
+#         distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
+#         valid_ids = []
+#         for i in range(len(indices[0])):
+#             neighbor_index = indices[0][i]
+#             # Get neighbor ID from the database
+#             neighbor_id = Products.objects.all()[neighbor_index].id  
+
+#             # Check if ID is valid
+#             if Products.objects.filter(id=neighbor_id).exists():
+#                 valid_ids.append(neighbor_id)
+
+#         # Return predicted IDs as JSON response
+#     print("valid id's ", valid_ids)
+#     return HttpResponse(request,{"predicted_ids":previous_orders})
+
+
+
+
+
+# views.py
+import pandas as pd
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Order, Products  # Adjusted import statement
+import pickle
+
+# Load the model and encoders
+with open('./model/knn_model_features_base.pkl', 'rb') as model_file:
+    loaded_model = pickle.load(model_file)
+
+with open('./model/encoders_features_base.pkl', 'rb') as encoder_file:
+    loaded_encoders = pickle.load(encoder_file)
+
+# Define the features
 features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
 
-def Recommend_product(request,user_id):
-    previous_orders = Order.objects.filter(user=user_id).last()
-    print("Last order----", previous_orders.product.id)
-    print("Last order----", previous_orders.product.gender)
-    print("Last order----", previous_orders.product.title)
-    product = previous_orders.product
-    new_data = {  # Replace with your actual new data point
-        'gender': product.gender,
-        'masterCategory': product.mastercategory,
-        'subCategory': product.subcategory,
-        'articleType': product.articletype,
-        'season': product.season
-    }
-    print("New data---", new_data)
-    # data = request.data
-    new_df = pd.DataFrame([new_data])
-    print("Dataframe---", new_df)
-    for feature in features:
-        new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
-
-        # Predict and filter IDs
-        distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
-        valid_ids = []
-        for i in range(len(indices[0])):
-            neighbor_index = indices[0][i]
-            # Get neighbor ID from the database
-            neighbor_id = Products.objects.all()[neighbor_index].id  
-
-            # Check if ID is valid
-            if Products.objects.filter(id=neighbor_id).exists():
-                valid_ids.append(neighbor_id)
-
-        # Return predicted IDs as JSON response
-    print("valid id's ", valid_ids)
-    return HttpResponse(request,{"predicted_ids":previous_orders})
-
+@csrf_exempt
+def recommend_product(request, user_id):
+    if request.method == 'GET':
+        try:
+            # Fetch the last order for the user
+            previous_order = Order.objects.filter(user=user_id).last()
+            product = previous_order.product
+            
+            # Prepare new data point
+            new_data = {
+                'gender': product.gender,
+                'masterCategory': product.mastercategory,
+                'subCategory': product.subcategory,
+                'articleType': product.articletype,
+                'season': product.season
+            }
+            
+            # Encode new data
+            new_df = pd.DataFrame([new_data])
+            print("New DF---", new_df)
+            for feature in features:
+                print("Data type----", type(new_df[feature]))
+                print("Data----", new_df[feature])
+                new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
+            
+            # Make predictions
+            print("before prediction")
+            distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
+            print("Prediction---", indices)
+            # Filter valid IDs
+            valid_ids = []
+            for i in range(len(indices[0])):
+                neighbor_index = indices[0][i]
+                neighbor_id = Products.objects.all()[neighbor_index].id  # Adjusted model name
+                if Products.objects.filter(id=neighbor_id).exists():
+                    valid_ids.append(neighbor_id)
+            
+            print("valid id's ", valid_ids)
+            return JsonResponse({"predicted_ids": valid_ids})
+            
         
+        except Exception as e:
+            return JsonResponse({"error": str(e)})
