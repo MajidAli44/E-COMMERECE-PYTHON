@@ -355,21 +355,25 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Order, Products  # Adjusted import statement
 import pickle
 
-# Load the model and encoders
-with open('./model/knn_model_features_base.pkl', 'rb') as model_file:
-    loaded_model = pickle.load(model_file)
+# # Load the model and encoders
+# with open('./model/knn_model_features_base.pkl', 'rb') as model_file:
+#     loaded_model = pickle.load(model_file)
 
-with open('./model/encoders_features_base.pkl', 'rb') as encoder_file:
-    loaded_encoders = pickle.load(encoder_file)
+# with open('./model/encoders_features_base.pkl', 'rb') as encoder_file:
+#     loaded_encoders = pickle.load(encoder_file)
 
-# Define the features
-features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
+# # Define the features
+# features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
 
 @csrf_exempt
 def recommend_product(request, user_id):
     if request.method == 'GET':
         try:
             # Fetch the last order for the user
+            feature = Products.objects.all().values_list('gender','mastercategory','subcategory','articletype','season', flat=True)
+            target =  list(Products.objects.all().values_list('id', flat=True))
+            new = pd.DataFrame([target])
+            print("Target---", new)
             previous_order = Order.objects.filter(user=user_id).last()
             product = previous_order.product
             
@@ -408,3 +412,60 @@ def recommend_product(request, user_id):
         
         except Exception as e:
             return JsonResponse({"error": str(e)})
+
+
+
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.neighbors import NearestNeighbors
+import pickle
+
+# Define global variables for model and encoders
+knn_model = None
+encoders = None
+
+def train_model(request):
+    global knn_model, encoders
+    
+    # Load your dataset
+    # data_df = pd.read_csv('./Ecommerce_final.csv')
+
+    # Define features and target
+    products = Products.objects.all().values('gender', 'mastercategory', 'subcategory', 'articletype', 'season')
+    features_ = list(products)
+    features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
+    target =  list(Products.objects.all().values_list('id', flat=True))
+    # print("Target ----", target)
+    X = pd.DataFrame.from_records(features_)
+    y = pd.DataFrame(target,columns=['id'])
+    print("Columns---",y)
+    print("y Columns---",y.columns)
+    # print("feature---", X)
+    # print("Id ss-",y)
+    # Convert categorical variables into numerical values using LabelEncoder
+    encoders = {}
+    for feature in features:
+        print("Data type----", type(feature))
+        encoders[feature] = LabelEncoder()
+        X[feature] = encoders[feature].fit_transform(X[feature])
+
+    # Train-Test Split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+    # Model Training (KNN)
+    knn_model = NearestNeighbors(n_neighbors=3)  # Get 3 nearest neighbors (IDs)
+    knn_model.fit(X_train, y_train)
+
+    # Save the trained KNN model
+    filename = 'knn_model_features_base.pkl'
+    pickle.dump(knn_model, open(filename, 'wb'))
+
+    # Save the LabelEncoders for future use
+    encoder_filename = 'encoders_features_base.pkl'
+    pickle.dump(encoders, open(encoder_filename, 'wb'))
+
+    return JsonResponse({'status': 'Model trained successfully.'})
