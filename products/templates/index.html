@@ -94,22 +94,18 @@
                 if(accessToken){
                     show_recomended_products();
                 }
-
             };
-
 
             function updatePaginationControls(totalPages, currentPage) {
              //   const prevBtn = document.getElementById('prevPageBtn');
               //  const nextBtn = document.getElementById('nextPageBtn');
                 const paginationControls = document.getElementById('paginationControls');
                 paginationControls.innerHTML = '';
-
             
                 // Clear existing page numbers
                 while (paginationControls.firstChild) {
                     paginationControls.removeChild(paginationControls.firstChild);
                 }
-            
                 // Add page numbers
                 console.log("before cuurent page---", currentPage)
                 let startPage = Math.max(1, currentPage - 1);
@@ -235,6 +231,105 @@
                 }).catch(error => {
                     console.error("Error:", error);
                 });
+            }
+
+            function ProductDetail(product_id){
+
+                if(decodedToken){
+                    const userId = decodedToken.user_id;
+                    const data = {
+                        product: product_id,
+                        user: userId,
+                    };
+                
+                    // Convert the JSON object to a string
+                    const body = JSON.stringify(data);
+                
+                    var url = `${API_BASE_URL}/products/history`;
+                    console.log("Final Cart URL---", url)
+                
+                    // Show loader
+                
+                    let options = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            //'Authorization': 'Bearer ' + accesstoken,
+                        },
+                        body: JSON.stringify(data),
+                    };
+                
+                    let fetchRes = fetch(url, options);
+                    fetchRes.then(res => {                
+                        if (!res.ok) {
+                            return res.json().then(errorData => {
+                                console.error("API request failed:", errorData);
+                                throw new Error("Network response was not OK");
+                            });
+                        }
+                        return res.json();
+                    }).then(data => {
+                        if (data) {
+                            console.log("responce----", data)
+                            show_recomended_products();
+                        } else {
+                            console.log("API request failed or did not indicate success.");
+                        }
+                    }).catch(error => {
+                        console.error("Error:", error);
+                    });
+    
+                }
+                /*
+                const data = {
+                    product: 1,
+                    product: pid,
+                    user: userId,
+                    price: price
+                };
+            
+                // Convert the JSON object to a string
+                const body = JSON.stringify(data);
+            
+                var url = `${API_BASE_URL}/products/listing/`;
+                console.log("Final Cart URL---", url)
+                accesstoken = localStorage.getItem("AccessToken");
+            
+                // Show loader
+            
+                let options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + accesstoken,
+                    },
+                    body: JSON.stringify(data),
+                };
+            
+                let fetchRes = fetch(url, options);
+                fetchRes.then(res => {
+                    // Hide loader when response is received
+                    document.getElementById('loader').style.display = 'none';
+            
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            console.error("API request failed:", errorData);
+                            throw new Error("Network response was not OK");
+                        });
+                    }
+                    return res.json(); // Return the JSON data promise
+                }).then(data => {
+                    if (data) {
+                        console.log("responce----", data)
+                        alert("Thank you for Ordering")
+                        show_recomended_products();
+                    } else {
+                        console.log("API request failed or did not indicate success.");
+                    }
+                }).catch(error => {
+                    console.error("Error:", error);
+                });*/
+
             }
             
             function addToCartClicked(pid, price) {

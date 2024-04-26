@@ -85,16 +85,18 @@ class ProductRetrieve(generics.RetrieveAPIView):
         pk = self.kwargs.get('pk')
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        print("ID is--", serializer.data.id)
-        history = UserHistory.objects.create(product = serializer.data.id, user = User.objects.get(id=pk))
-        history.save()
         return render(request, self.template_name, {'data': serializer.data})
     
 
 class OrderCreation(generics.CreateAPIView):
+    
     serializer_class = OrderWriteSerializer
     queryset = Order.objects.all()
 
+class UserHistoryCreate(generics.CreateAPIView):
+    
+    serializer_class = OrderWriteSerializer
+    queryset = UserHistory.objects.all()
 
 
 class CartViewSet(viewsets.ModelViewSet):
@@ -217,64 +219,64 @@ def extract_features(image):
     features = base_model.predict(preprocessed_image)
     return features
 
-@api_view(['GET'])
-# @permission_classes((IsAuthenticated, ))
-def recommend_products(request, user_id):
-    if request.method == 'GET':
-        try:
-            order = Order.objects.filter(user=user_id).last()
-        except Order.DoesNotExist:
-            return JsonResponse({'error': 'Order not found'}, status=404)
+# @api_view(['GET'])
+# # @permission_classes((IsAuthenticated, ))
+# def recommend_products(request, user_id):
+#     if request.method == 'GET':
+#         try:
+#             order = Order.objects.filter(user=user_id).last()
+#         except Order.DoesNotExist:
+#             return JsonResponse({'error': 'Order not found'}, status=404)
 
-        previous_orders = Order.objects.filter(user=user_id).latest()
-        user = request.user
-        print("User is---",user)
-        # Extract features from images of previous orders
-        features = []
-        for previous_order in previous_orders:
-            imageUrl = ''
-            url = previous_order.product.image.name
-            print("Image URL OF ", url)
-            if "http://assets.myntassets.com" in url:
-                print("image assest found")
-                imageUrl = url
-            else:
-                imageUrl = settings.SITE_URL + url
-            image = load_image_from_url(imageUrl)
-            # Extract features from the image using the VGG16 base model
-            image_features = extract_features(image)
-            features.append(image_features)
+#         previous_orders = Order.objects.filter(user=user_id).latest()
+#         user = request.user
+#         print("User is---",user)
+#         # Extract features from images of previous orders
+#         features = []
+#         for previous_order in previous_orders:
+#             imageUrl = ''
+#             url = previous_order.product.image.name
+#             print("Image URL OF ", url)
+#             if "http://assets.myntassets.com" in url:
+#                 print("image assest found")
+#                 imageUrl = url
+#             else:
+#                 imageUrl = settings.SITE_URL + url
+#             image = load_image_from_url(imageUrl)
+#             # Extract features from the image using the VGG16 base model
+#             image_features = extract_features(image)
+#             features.append(image_features)
 
-        combined_features = np.concatenate(features, axis=0)
-        num_samples = combined_features.shape[0]
-        print("num samples---", num_samples)
-        flattened_features = combined_features.reshape(num_samples, -1)
+#         combined_features = np.concatenate(features, axis=0)
+#         num_samples = combined_features.shape[0]
+#         print("num samples---", num_samples)
+#         flattened_features = combined_features.reshape(num_samples, -1)
         
-        num_components = min(313, min(combined_features.shape))
-        pca = PCA(n_components=num_components)
-        reduced_features = pca.fit_transform(flattened_features)
+#         num_components = min(313, min(combined_features.shape))
+#         pca = PCA(n_components=num_components)
+#         reduced_features = pca.fit_transform(flattened_features)
         
-        if reduced_features.shape[1] < 313:
-            padding = np.zeros((num_samples, 313 - reduced_features.shape[1]))
-            reduced_features = np.hstack((reduced_features, padding))
-        print("Befire model prediction")
-        # similar_product_ids = knn_model.predict(reduced_features)
-        num_neighbors = 3
-        distances, indices = knn_model.kneighbors(reduced_features, n_neighbors=num_neighbors)
-        similar_product_ids = indices.flatten()
-        print("ID predicted",similar_product_ids)
-        products = Products.objects.filter(id__in=similar_product_ids)
-        serializer = ProductReadSerializer(products, many=True)
-        print("Before serializer------")
-        return Response(serializer.data)
+#         if reduced_features.shape[1] < 313:
+#             padding = np.zeros((num_samples, 313 - reduced_features.shape[1]))
+#             reduced_features = np.hstack((reduced_features, padding))
+#         print("Befire model prediction")
+#         # similar_product_ids = knn_model.predict(reduced_features)
+#         num_neighbors = 3
+#         distances, indices = knn_model.kneighbors(reduced_features, n_neighbors=num_neighbors)
+#         similar_product_ids = indices.flatten()
+#         print("ID predicted",similar_product_ids)
+#         products = Products.objects.filter(id__in=similar_product_ids)
+#         serializer = ProductReadSerializer(products, many=True)
+#         print("Before serializer------")
+#         return Response(serializer.data)
     
-    elif request.method == 'POST':
-        data = request.POST
-        return JsonResponse({'received_data': data})
+#     elif request.method == 'POST':
+#         data = request.POST
+#         return JsonResponse({'received_data': data})
 
-    else:
-        # Handle other HTTP methods
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+#     else:
+#         # Handle other HTTP methods
+#         return JsonResponse({'error': 'Method not allowed'}, status=405)
        
 @api_view(['GET'])
 def image_proxy(request):
@@ -291,8 +293,6 @@ def image_proxy(request):
     else:
         # If the request failed, return an empty response or handle the error as needed
         return HttpResponse(status=response.status_code)
-    
-
 
 
 
@@ -300,23 +300,33 @@ def image_proxy(request):
 import pickle
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Product
+from .models import Products
 
 # Load your model and encoders 
 loaded_model = pickle.load(open('./model/knn_model_features_base.pkl', 'rb'))
-loaded_encoders = pickle.load(open('./model/ncoders_features_base.pkl', 'rb'))
+loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
 
 features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
 
-class PredictIDView(APIView):
-    def post(self, request):
-        # Get data from the request
-        data = request.data
-        new_df = pd.DataFrame([data])
-
-        # Encode features
-        for feature in features:
-            new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
+def Recommend_product(request,user_id):
+    previous_orders = Order.objects.filter(user=user_id).last()
+    print("Last order----", previous_orders.product.id)
+    print("Last order----", previous_orders.product.gender)
+    print("Last order----", previous_orders.product.title)
+    product = previous_orders.product
+    new_data = {  # Replace with your actual new data point
+        'gender': product.gender,
+        'masterCategory': product.mastercategory,
+        'subCategory': product.subcategory,
+        'articleType': product.articletype,
+        'season': product.season
+    }
+    print("New data---", new_data)
+    # data = request.data
+    new_df = pd.DataFrame([new_data])
+    print("Dataframe---", new_df)
+    for feature in features:
+        new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
 
         # Predict and filter IDs
         distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
@@ -324,11 +334,14 @@ class PredictIDView(APIView):
         for i in range(len(indices[0])):
             neighbor_index = indices[0][i]
             # Get neighbor ID from the database
-            neighbor_id = Product.objects.all()[neighbor_index].id  
+            neighbor_id = Products.objects.all()[neighbor_index].id  
 
             # Check if ID is valid
-            if Product.objects.filter(id=neighbor_id).exists():
+            if Products.objects.filter(id=neighbor_id).exists():
                 valid_ids.append(neighbor_id)
 
         # Return predicted IDs as JSON response
-        return Response({"predicted_ids": valid_ids})
+    print("valid id's ", valid_ids)
+    return HttpResponse(request,{"predicted_ids":previous_orders})
+
+        
