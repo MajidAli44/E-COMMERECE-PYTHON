@@ -6,24 +6,27 @@ from Eshop import settings
 
 class Products(models.Model):
     id = models.IntegerField(primary_key=True)
-    title = models.CharField(max_length=255)
-    unit_price = models.DecimalField(
-        max_digits=6, 
-        decimal_places=2,
-        validators=[MinValueValidator(1)]                            
-        )
-    inventory = models.IntegerField(
-        validators=[MinValueValidator(1)]
-    )
-    image = models.ImageField(upload_to='product/',max_length=255)
-    description = models.TextField()
-    last_update = models.DateField(auto_now=True)
+    # title = models.CharField(max_length=255)
+    # unit_price = models.DecimalField(
+    #     max_digits=6, 
+    #     decimal_places=2,
+    #     validators=[MinValueValidator(1)]                            
+    #     )
+    # inventory = models.IntegerField(
+    #     validators=[MinValueValidator(1)]
+    # )
+    # last_update = models.DateField(auto_now=True)
     gender = models.CharField(max_length=20)
     mastercategory = models.CharField(max_length=50)
     subcategory = models.CharField(max_length=50)
     articletype = models.CharField(max_length=50)
-    basecolour = models.CharField(max_length=50)
+    # basecolour = models.CharField(max_length=50)
     season = models.CharField(max_length=20)
+    title = models.CharField(max_length=255)
+    description = models.TextField(max)
+    unit_price = models.IntegerField()
+    image = models.ImageField(upload_to='product/',max_length=255)
+    
  
     def __str__(self):
         return self.title
