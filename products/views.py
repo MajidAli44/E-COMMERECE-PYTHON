@@ -76,6 +76,17 @@ class ProductVIewSet(viewsets.ModelViewSet):
         response.data['totalPages'] = total_pages
         return response
     
+class ProductRetrieve(generics.RetrieveAPIView):
+    queryset = Products.objects.all()
+    serializer_class = ProductReadSerializer
+    template_name = "ProductDetail.html"
+    
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return render(request, self.template_name, {'data': serializer.data})
+    
+    
 
 class OrderCreation(generics.CreateAPIView):
     serializer_class = OrderWriteSerializer

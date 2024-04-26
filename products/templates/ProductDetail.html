@@ -1,0 +1,31 @@
+{% extends "headerfooter.html" %}
+{% block content %}
+
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <h1 class="text-center my-4">Items from API</h1>
+                <div id="items-container" class="row">
+                    <div class="card">
+                        <div class="row no-gutters">
+                            <div class="col-md-3" style="margin-left:50px;" >
+                                <img src={{data.image}} class="card-img ml-5" alt="ALter">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card-body mt-5">
+                                    <h5 class="card-title">{{data.title}}</h5>
+                                    <p class="card-text">{{data.description}}</p>
+                                    <p class="card-text">$ {{data.unit_price}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       
+    </script>
+{% endblock content %}

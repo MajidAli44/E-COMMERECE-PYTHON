@@ -21,8 +21,6 @@
             </div>
             <!-- Modal Search End -->
 
-
-
             <!-- Bestsaler Product Start -->
             <div class="container-fluid pt-5 mt-5">
                 <div class="container py-5 mt-5" id='recommended_products_container'>
@@ -80,7 +78,7 @@
                 </div>
             </div>
             <!-- Fruits Shop End-->
-
+            <div id="loader" class="loader"></div>
         <script>
             const API_BASE_URL = "{{ SITE_URL }}";
             var accessToken = localStorage.getItem("AccessToken");
@@ -173,17 +171,12 @@
                     }
                 });
             }
-            
 
-
-               
             let currentPage = 1; // Initialize the current page
             const itemsPerPage = 20; // Number of items per page
 
             
-            function ShowProducts(page = currentPage) {
-                console.log("Show products is called----")
-                
+            function ShowProducts(page = currentPage) {                
                 var url = `${API_BASE_URL}/products/?page=${page}`;
                 let options = {
                     method: "GET",
@@ -211,27 +204,27 @@
                             tab += `                            
                                     <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 630px; overflow: hidden;">
                                         <div class="rounded position-relative fruite-item">
-                                            <div class="fruite-img">
-                                                <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
-                                            </div>
-                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
-                                                <h4>${d.title}</h4>
-                                                <p style="text-align:justify;">${Description}</p>
-                                                <div class="d-flex justify-content-between flex-lg-wrap">
-                                                    <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
-                                                        //if (d.cart_set.length == 0)
-                                                     //   {
-                                                            tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> `
-                                                            
-                                                      //  }
-                                                tab +=    `</div>
-                                            </div>
+                                            <a href="/products/retrieve/${d.id}">
+                                                <div class="fruite-img">
+                                                    <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
+                                                </div>
+                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
+                                                    <h4>${d.title}</h4>
+                                                    <p style="text-align:justify;">${Description}</p>
+                                                    <div class="d-flex justify-content-between flex-lg-wrap">
+                                                        <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
+                                                            //if (d.cart_set.length == 0)
+                                                        //   {
+                                                                tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a> `
+                                                                
+                                                        //  }
+                                                    tab +=    `</div>
+                                                </div>
+                                            </a>
                                         </div>
                                     </div>`;
                         }    
                         document.getElementById("products").innerHTML = tab; 
-                        console.log("pages is---", data.totalPages)
-                        console.log("totoal data pages is---", data)
                         updatePaginationControls(data.totalPages, page); // Update pagination controls
                     } else {
                         console.log("API request failed or did not indicate success.");
@@ -241,89 +234,30 @@
                 });
             }
             
-
-            
-         /*   function ShowProducts() {
-                console.log("Show products is called----")
-                
-                var url = `${API_BASE_URL}/products/`;
-                let options = {
-                    method: "GET",
-                };
-                let fetchRes = fetch(url, options);
-                fetchRes.then(res => {
-                    if (!res.ok) {
-                        return res.json().then(errorData => {
-                            console.error("API request failed:", errorData);
-                            throw new Error("Network response was not OK");
-                        });
-                    }
-                    return res.json();  // Return the JSON data promise
-                }).then(data => {
-                    if (data) {
-                        console.log("responce----", data)
-                        let tab = " ";
-                        for (let d of data) {   
-                            console.log("cat image----",d.image)
-                            console.log("title is----",d.title)
-                            let Description = d.description.split(' ').slice(0, 10).join(' ');
-                            if (d.description.split(' ').length > 10) {
-                                Description += '...';
-                            } 
-                            console.log("Image of product", d.image)
-                            console.log("type of Image of product", typeof d.image)                       
-                            tab += `                            
-                                    <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 630px; overflow: hidden;">
-                                        <div class="rounded position-relative fruite-item">
-                                            <div class="fruite-img">
-                                                <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
-                                            </div>
-                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
-                                                <h4>${d.title}</h4>
-                                                <p style="text-align:justify;">${Description}</p>
-                                                <div class="d-flex justify-content-between flex-lg-wrap">
-                                                    <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
-                                                        //if (d.cart_set.length == 0)
-                                                     //   {
-                                                            tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> `
-                                                            
-                                                      //  }
-                                                tab +=    `</div>
-                                            </div>
-                                        </div>
-                                    </div>`;
-                        }    
-                        document.getElementById("products").innerHTML = tab; 
-                    } else {
-                        console.log("API request failed or did not indicate success.");
-                    }
-                }).catch(error => {
-                    console.error("Error:", error);
-                });
-            }*/
-            
-            function addToCartClicked(pid,price) {
-
+            function addToCartClicked(pid, price) {
+                document.getElementById('loader').style.display = 'block';
                 var accessToken = localStorage.getItem("AccessToken");
                 if (!accessToken) {
                     alert("Please login for the order")
                     window.location.href = `${API_BASE_URL}/auth/loginPage`;
-                } 
+                }
                 console.log("Cart API called-----")
                 const userId = decodedToken.user_id;
                 const data = {
                     quantity: 1,
                     product: pid,
                     user: userId,
-                    price:price
+                    price: price
                 };
-                
+            
                 // Convert the JSON object to a string
                 const body = JSON.stringify(data);
-
+            
                 var url = `${API_BASE_URL}/products/listing/`;
                 console.log("Final Cart URL---", url)
                 accesstoken = localStorage.getItem("AccessToken");
+            
+                // Show loader
             
                 let options = {
                     method: 'POST',
@@ -333,15 +267,19 @@
                     },
                     body: JSON.stringify(data),
                 };
+            
                 let fetchRes = fetch(url, options);
                 fetchRes.then(res => {
+                    // Hide loader when response is received
+                    document.getElementById('loader').style.display = 'none';
+            
                     if (!res.ok) {
                         return res.json().then(errorData => {
                             console.error("API request failed:", errorData);
                             throw new Error("Network response was not OK");
                         });
                     }
-                    return res.json();  // Return the JSON data promise
+                    return res.json(); // Return the JSON data promise
                 }).then(data => {
                     if (data) {
                         console.log("responce----", data)
@@ -354,15 +292,13 @@
                     console.error("Error:", error);
                 });
             }
-
+            
             async function fetchImageViaProxy(imageUrl) {
                 try {
                     const response = await fetch(`${API_BASE_URL}/products/image-proxy?url=${encodeURIComponent(imageUrl)}`, { method: 'GET' });
                     if (!response.ok) {
                         throw new Error('Failed to fetch image via proxy');
                     }
-                    console.log("OK Fetch")
-                    console.log("Response is---", response)
                     const blob = await response.blob();
                     return URL.createObjectURL(blob);
                 } catch (error) {
@@ -373,8 +309,6 @@
 
             let products_data = [];
             async function render_recommended_products() {
-                console.log("Products Data---", products_data)
-                console.log("length of Products Data---", products_data.length)
                 let tab = `
                     <h1>Recommended Products</h1>
                     <div class="row mt-0 align-items-center">
@@ -386,7 +320,6 @@
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
                     const imageUrl = await fetchImageViaProxy(d.image);
-                    console.log("image is url--", imageUrl)
                        
                     tab += `
                         <div class="col-lg-4 m-0">
