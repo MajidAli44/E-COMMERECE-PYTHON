@@ -14,8 +14,9 @@
                             <div class="col-md-4">
                                 <div class="card-body mt-5">
                                     <h5 class="card-title">{{data.title}}</h5>
-                                    <p class="card-text">{{data.description}}</p>
-                                    <p class="card-text">$ {{data.unit_price}}</p>
+                                    <p class="card-text mt-3">{{data.description}}</p>
+                                    <p class="card-text mt-5">$ {{data.unit_price}}</p>
+                                    <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked({{data.id}},{{data.unit_price}})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a>
                                 </div>
                             </div>
                         </div>
@@ -25,6 +26,59 @@
         </div>
     </div>
     <script>
-       
+        function addToCartClicked(pid, price) {
+
+            var accessToken = localStorage.getItem("AccessToken");
+            if (!accessToken) {
+                alert("Please login for the order")
+                window.location.href = `${API_BASE_URL}/auth/loginPage`;
+            }
+            console.log("Cart API called-----")
+            const userId = decodedToken.user_id;
+            const data = {
+                quantity: 1,
+                product: pid,
+                user: userId,
+                price: price
+            };
+        
+            // Convert the JSON object to a string
+            const body = JSON.stringify(data);
+        
+            var url = `${API_BASE_URL}/products/listing/`;
+            console.log("Final Cart URL---", url)
+        
+            // Show loader
+        
+            let options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accesstoken,
+                },
+                body: JSON.stringify(data),
+            };
+        
+            let fetchRes = fetch(url, options);
+            fetchRes.then(res => {
+        
+                if (!res.ok) {
+                    return res.json().then(errorData => {
+                        console.error("API request failed:", errorData);
+                        throw new Error("Network response was not OK");
+                    });
+                }
+                return res.json(); // Return the JSON data promise
+            }).then(data => {
+                if (data) {
+                    console.log("responce----", data)
+                    alert("Thank you for Ordering")
+                } else {
+                    console.log("API request failed or did not indicate success.");
+                }
+            }).catch(error => {
+                console.error("Error:", error);
+            });
+        }
     </script>
 {% endblock content %}

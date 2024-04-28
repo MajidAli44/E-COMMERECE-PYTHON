@@ -191,22 +191,23 @@
                         console.log("responce----", data)
                         let tab = " ";
                         for (let d of data.results) {   
-                            let Description = d.description.split(' ').slice(0, 10).join(' ');
-                            if (d.description.split(' ').length > 10) {
-                                Description += '...';
+                            let Description = d.description.split(' ').slice(0, 7).join(' ');
+                            let product_desc = Description.split(' ').filter(word => word.length > 0).join(' ');
+                            if (d.description.split(' ').length > 7) {
+                                product_desc += '...';
                             } 
                             console.log("Image of product", d.image)
                             console.log("type of Image of product", typeof d.image)                       
                             tab += `                            
                                     <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 630px; overflow: hidden;">
                                         <div class="rounded position-relative fruite-item">
-                                            <a href="/products/retrieve/${d.id}">
+                                            <a href = "#" onclick="ProductDetail(${d.id})">
                                                 <div class="fruite-img">
                                                     <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
                                                 </div>
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
                                                     <h4>${d.title}</h4>
-                                                    <p style="text-align:justify;">${Description}</p>
+                                                    <p style="text-align:justify;">${product_desc}</p>
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
                                                             //if (d.cart_set.length == 0)
@@ -234,7 +235,7 @@
             }
 
             function ProductDetail(product_id){
-
+                console.log("Decoded Token---", decodedToken)
                 if(decodedToken){
                     const userId = decodedToken.user_id;
                     const data = {
@@ -270,8 +271,8 @@
                         return res.json();
                     }).then(data => {
                         if (data) {
-                            console.log("responce----", data)
-                            show_recomended_products();
+                            console.log("History is Saved----", data)
+                            window.location.href = `${API_BASE_URL}/products/retrieve/${product_id}`;
                         } else {
                             console.log("API request failed or did not indicate success.");
                         }
@@ -280,55 +281,8 @@
                     });
     
                 }
-                /*
-                const data = {
-                    product: 1,
-                    product: pid,
-                    user: userId,
-                    price: price
-                };
-            
-                // Convert the JSON object to a string
-                const body = JSON.stringify(data);
-            
-                var url = `${API_BASE_URL}/products/listing/`;
-                console.log("Final Cart URL---", url)
-                accesstoken = localStorage.getItem("AccessToken");
-            
-                // Show loader
-            
-                let options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + accesstoken,
-                    },
-                    body: JSON.stringify(data),
-                };
-            
-                let fetchRes = fetch(url, options);
-                fetchRes.then(res => {
-                    // Hide loader when response is received
-                    document.getElementById('loader').style.display = 'none';
-            
-                    if (!res.ok) {
-                        return res.json().then(errorData => {
-                            console.error("API request failed:", errorData);
-                            throw new Error("Network response was not OK");
-                        });
-                    }
-                    return res.json(); // Return the JSON data promise
-                }).then(data => {
-                    if (data) {
-                        console.log("responce----", data)
-                        alert("Thank you for Ordering")
-                        show_recomended_products();
-                    } else {
-                        console.log("API request failed or did not indicate success.");
-                    }
-                }).catch(error => {
-                    console.error("Error:", error);
-                });*/
+
+                window.location.href = `${API_BASE_URL}/products/retrieve/${product_id}`;
 
             }
             
