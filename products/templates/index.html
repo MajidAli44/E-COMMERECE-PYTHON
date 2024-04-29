@@ -334,9 +334,9 @@
                     return res.json(); // Return the JSON data promise
                 }).then(data => {
                     if (data) {
-                        console.log("responce----", data)
+                        console.log("responce ----", Object.keys(objectName).length)
                         alert("Thank you for Ordering")
-                        show_recomended_products();
+                            show_recomended_products();
                     } else {
                         console.log("API request failed or did not indicate success.");
                     }
@@ -358,7 +358,6 @@
                             <div class="d-flex flex-wrap">`;
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
-                    //const imageUrl = await fetchImageViaProxy(d.image);
                        
                     tab += `
                         <div class="col-lg-4 m-0">
@@ -385,7 +384,6 @@
                     </div>`;
                 document.getElementById("recommended_products_container").innerHTML = tab;
             
-                // Attach event listeners after rendering the buttons
                 document.getElementById('prevBtn').addEventListener('click', function() {
                     console.log("BUtton clicked")
                     if (currentIndex > 0) {
@@ -428,7 +426,9 @@
                     products_data = data;
                     if (products_data) {
                         console.log("Data is---",products_data)
-                        render_recommended_products()
+                        if(Object.keys(products_data).length != 0){
+                            render_recommended_products()
+                        }
                         } else {
                         console.log("API request failed or did not indicate success.");
                     }
