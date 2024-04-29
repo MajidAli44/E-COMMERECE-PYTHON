@@ -210,8 +210,9 @@ def Recommend_product(request,user_id):
             'articleType': order.product.articletype,
             'season': order.product.season,
             'unit_price': order.product.unit_price
-            
             }
+            print("Aticle type---", order.product.articletype)
+            print("unit type---", type(order.product.unit_price))
             products_.append(new_data)
     if user_history:
         for user in user_history:
@@ -230,7 +231,6 @@ def Recommend_product(request,user_id):
         new_df = pd.DataFrame(products_)
         print("New Df---", new_df)
         for feature in features:
-            print("Feature---", feature)
             new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
 
         distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
@@ -243,7 +243,7 @@ def Recommend_product(request,user_id):
         
         print("Total Id's---", len(predicted_ids_list))
         predicted_ids_list = [id for ids in predicted_ids_list for id in ids]
-        print("Total type Id's---", type(predicted_ids_list))
+        print("Total type Id's---", predicted_ids_list)
         products = Products.objects.filter(id__in=predicted_ids_list)
         serializer = ProductReadSerializer(products, many=True)
         return Response(serializer.data)
