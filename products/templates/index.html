@@ -413,7 +413,7 @@
             function show_recomended_products() {
                 const userId = decodedToken.user_id;
                 url = `${API_BASE_URL}/products/recommended/products/${userId}`
-                accesstoken = localStorage.getItem("AccessToken")
+                const accesstoken = localStorage.getItem("AccessToken")
                 console.log("Access Token is----", accesstoken)
                 let options = {
                     method: "GET",
