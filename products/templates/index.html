@@ -199,27 +199,31 @@
                             console.log("Image of product", d.image)
                             console.log("type of Image of product", typeof d.image)                       
                             tab += `                            
-                                    <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 660px; overflow: hidden;">
-                                        <div class="rounded position-relative fruite-item">
-                                            <a href = "#" onclick="ProductDetail(event,${d.id})">
-                                                <div class="fruite-img">
-                                                    <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
-                                                </div>
-                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 250px; overflow: hidden solid #f78f20;">
-                                                    <h4>${d.title}</h4>
-                                                    <p>${product_desc}</p>
-                                                    <div class="d-flex justify-content-between align-items-end">
-                                                        <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
-                                                            //if (d.cart_set.length == 0)
-                                                        //   {
-                                                                tab +=   ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a> `
-                                                                
-                                                        //  }
-                                                    tab +=    `</div>
-                                                </div>
-                                            </a>
+                            <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 660px; overflow: hidden;">
+                                <div class="rounded position-relative fruite-item d-flex flex-column h-100">
+                                    <a href="#" onclick="ProductDetail(event, ${d.id})">
+                                        <div class="fruite-img">
+                                            <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
                                         </div>
-                                    </div>`;
+                                        <div class="p-4 border border-secondary border-top-0 rounded-bottom flex-grow-1 d-flex flex-column">
+                                            <div>
+                                                <h4>${d.title}</h4>
+                                                <p>${product_desc}</p>
+                                            </div>
+                                            <div class="mt-auto">
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
+                                                    //if (d.cart_set.length == 0)
+                                                    //   {
+                                                    tab += ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a> `
+                            
+                                                    //  }
+                                                    tab += `</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>`;
                         }    
                         document.getElementById("products").innerHTML = tab; 
                         if(data.results){
@@ -346,19 +350,6 @@
                 });
             }
             
-           /* async function fetchImageViaProxy(imageUrl) {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/products/image-proxy?url=${encodeURIComponent(imageUrl)}`, { method: 'GET' });
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch image via proxy');
-                    }
-                    const blob = await response.blob();
-                    return URL.createObjectURL(blob);
-                } catch (error) {
-                    console.error('Error fetching image via proxy:', error);
-                    return null;
-                }
-            }*/
 
             let products_data = [];
             async function render_recommended_products() {
