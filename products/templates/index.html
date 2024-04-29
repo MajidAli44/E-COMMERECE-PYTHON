@@ -306,7 +306,6 @@
             }
             
             function addToCartClicked(pid, price) {
-                document.getElementById('loader').style.display = 'block';
                 var accessToken = localStorage.getItem("AccessToken");
                 if (!accessToken) {
                     alert("Please login for the order")
@@ -337,7 +336,6 @@
                 let fetchRes = fetch(url, options);
                 fetchRes.then(res => {
                     // Hide loader when response is received
-                    document.getElementById('loader').style.display = 'none';
             
                     if (!res.ok) {
                         return res.json().then(errorData => {
