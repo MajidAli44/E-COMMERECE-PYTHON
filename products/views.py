@@ -217,18 +217,26 @@ def Recommend_product(request,user_id):
         }
         products_.append(new_data)
 
-    new_df = pd.DataFrame([new_data])
+    print("Total products---", products_)
+    new_df = pd.DataFrame(products_)
     print("New Df---", new_df)
     for feature in features:
+        print("Feature---", feature)
         new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
 
     distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
-    predicted_ids = product_predict.iloc[indices[0]]
-    print("Id's---", predicted_ids)
-    products = Products.objects.filter(id__in=predicted_ids)
-    print("Products----", products)
+
+    # Get Predicted IDs for Each Data Point
+    predicted_ids_list = []
+    for i in range(len(new_df)):
+        predicted_ids_for_point = product_predict.iloc[indices[i]]
+        predicted_ids_list.append(predicted_ids_for_point.values)
+    
+    print("Total Id's---", len(predicted_ids_list))
+    predicted_ids_list = [id for ids in predicted_ids_list for id in ids]
+    print("Total type Id's---", type(predicted_ids_list))
+    products = Products.objects.filter(id__in=predicted_ids_list)
     serializer = ProductReadSerializer(products, many=True)
-    print("Serializer data----", serializer.data)
     return Response(serializer.data)
 
 

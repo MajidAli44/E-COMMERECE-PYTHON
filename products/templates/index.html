@@ -199,15 +199,15 @@
                             console.log("Image of product", d.image)
                             console.log("type of Image of product", typeof d.image)                       
                             tab += `                            
-                                    <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 630px; overflow: hidden;">
+                                    <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 660px; overflow: hidden;">
                                         <div class="rounded position-relative fruite-item">
                                             <a href = "#" onclick="ProductDetail(${d.id})">
                                                 <div class="fruite-img">
                                                     <img src="${d.image}" class="img-fluid w-100 rounded-top" style="border: 1px solid #f78f20;" alt="">
                                                 </div>
-                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 240px; overflow: hidden solid #f78f20;">
+                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="min-height: 250px; overflow: hidden solid #f78f20;">
                                                     <h4>${d.title}</h4>
-                                                    <p style="text-align:justify;">${product_desc}</p>
+                                                    <p>${product_desc}</p>
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
                                                             //if (d.cart_set.length == 0)
@@ -416,8 +416,7 @@
                     }
                 });
             }
-            
-            
+              
             
             function show_recomended_products() {
                 const userId = decodedToken.user_id;
