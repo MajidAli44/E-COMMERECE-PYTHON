@@ -89,7 +89,7 @@
             } 
             let currentIndex = 0;
             function onLoadHandler() {
-                console.log("Onload is called----");
+                console.log(" Onload is called----");
                 ShowProducts();
                 if(accessToken){
                     show_recomended_products();
@@ -97,7 +97,7 @@
             }
             window.addEventListener("load", onLoadHandler);
             window.addEventListener("pageshow", function(event) {
-                console.log("Onload is called----")
+                console.log("onhander Onload is called----")
                 if (!event.persisted) {
                     onLoadHandler();
                 }
@@ -341,7 +341,7 @@
                     return res.json(); // Return the JSON data promise
                 }).then(data => {
                     if (data) {
-                        console.log("responce ----", Object.keys(objectName).length)
+                        console.log("responce ----", data)
                         alert("Thank you for Ordering")
                             show_recomended_products();
                     } else {
