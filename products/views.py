@@ -191,7 +191,7 @@ loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
 product_predict = pickle.load(open('./model/Y_train.pkl', 'rb')) 
 
 
-features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
+features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season','unit_price']
 
 @api_view(['GET'])
 def Recommend_product(request,user_id):
@@ -208,7 +208,9 @@ def Recommend_product(request,user_id):
             'masterCategory': order.product.mastercategory,
             'subCategory': order.product.subcategory,
             'articleType': order.product.articletype,
-            'season': order.product.season
+            'season': order.product.season,
+            'unit_price': order.product.unit_price
+            
             }
             products_.append(new_data)
     if user_history:
@@ -218,7 +220,8 @@ def Recommend_product(request,user_id):
             'masterCategory': user.product.mastercategory,
             'subCategory': user.product.subcategory,
             'articleType': user.product.articletype,
-            'season': user.product.season
+            'season': user.product.season,
+            'unit_price': user.product.unit_price
             }
             products_.append(new_data)
 

@@ -88,13 +88,20 @@
                 decodedToken = jwtDecode(accessToken);
             } 
             let currentIndex = 0;
-            window.onload = function() {
-                console.log("Onload is called----")
+            function onLoadHandler() {
+                console.log("Onload is called----");
                 ShowProducts();
                 if(accessToken){
                     show_recomended_products();
                 }
-            };
+            }
+            window.addEventListener("load", onLoadHandler);
+            window.addEventListener("pageshow", function(event) {
+                console.log("Onload is called----")
+                if (!event.persisted) {
+                    onLoadHandler();
+                }
+            });
 
             function updatePaginationControls(totalPages, currentPage) {
              //   const prevBtn = document.getElementById('prevPageBtn');

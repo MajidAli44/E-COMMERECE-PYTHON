@@ -7,39 +7,34 @@
     <title>Loader Example</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Center the loader */
-        #loader {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999; /* Ensure it's on top of everything */
-        }
-    </style>
 </head>
 <body>
     <!-- Loader -->
-    <div id="loader" class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <div class="position-fixed top-50 start-50 translate-middle d-flex flex-column align-items-center">
+        <div class="spinner-border mb-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading...</p>
     </div>
 
-    <!-- Your content goes here -->
-    <h1>Hello, world!</h1>
+    <!-- Your content here -->
+    <div class="container">
+        <h1>Welcome to My Page</h1>
+        <p>This is some text inside the page.</p>
+    </div>
 
-    <!-- Bootstrap JS and your custom JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Simulate a delay to show the loader
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'block';
-            // Simulate an action (e.g., loading data)
-            setTimeout(() => {
-                // Hide the loader when the action is complete
-                document.getElementById('loader').style.display = 'none';
-            }, 2000); // Simulate a 2-second delay
-        }, 1000); // Simulate a 1-second delay
+        // Add blur class to body when loader is displayed
+        document.addEventListener('DOMContentLoaded', function() {
+            const loaderContainer = document.querySelector('.position-fixed');
+            loaderContainer.classList.add('top-50', 'start-50', 'translate-middle');
+
+            // Close loader after one minute
+            setTimeout(function() {
+                loaderContainer.remove();
+                document.body.classList.remove('blur');
+            }, 60000); // 60000 milliseconds = 1 minute
+        });
     </script>
 </body>
 </html>
