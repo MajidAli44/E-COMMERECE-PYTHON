@@ -271,17 +271,11 @@
     <script>
       console.log("Header Page Testing");
       const BASE_URL = "{{ SITE_URL }}";
-      accesstoken = localStorage.getItem("AccessToken");
-      
-      function logout_user(){
-        console.log("Function is called");        
-        localStorage.clear();
-        window.location.href = `${BASE_URL}/auth/logout`;
-    }
+      const accesstoken = localStorage.getItem("AccessToken");
 
       let tab = "";
       if (accesstoken) {
-        tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'login_page' %}" role="button" onclick=logout_user() >Logout</a>`;
+        tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'logout' %}" role="button" onclick=logout_user() >Logout</a>`;
       } else {
         console.log("Access token is not set")
         tab = `<a class="btn btn-primary btn-lg text-light" href="{% url 'login_page' %}" role="button">Login</a>
@@ -289,8 +283,16 @@
       }
 
       document.getElementById("Auth-Tabs").innerHTML = tab;
+      function logout_user(){
+        console.log("Function is called");
+
+        if (accesstoken) {
+          localStorage.clear();
+          window.location.reload()
+        }    
+
+    }
     </script>
-    <!-- Template Javascript -->
     <script src="../../static/js/main.js"></script>
 
   </body>

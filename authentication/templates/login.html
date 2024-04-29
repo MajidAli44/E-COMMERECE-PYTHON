@@ -37,7 +37,7 @@
                                 <input type="email" class="w-100 form-control border-0 py-3 mb-4" name="email" id="emailInput" autocomplete="off" placeholder="Enter Your Email" required>
                                 <input type="password" class="w-100 form-control border-0 py-3 mb-4" name="password" id="passwordInput" autocomplete="off" placeholder="Password" required>
                                 <p class="text-md-end" ><a href="#" onclick="myForgetFunction()">Forget password? </a></p>
-                                <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " onclick="mySubmitFunction()">Login</button>
+                                <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " onclick="login()">Login</button>
                             </form>
                             <p class="text-center py-4" >New member? <a href="{% url 'signup_page' %}" onclick="myForgetFunction()">Register </a> here</p>
                         </div>
@@ -63,7 +63,7 @@
         let token;
         let accessToken;
         let refreshToken;
-        function mySubmitFunction() {
+        function login() {
 
             url = `${API_BASE_URL}/auth/token`
 

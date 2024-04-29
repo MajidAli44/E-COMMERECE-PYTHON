@@ -3,9 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
 from django.shortcuts import render
-from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from .serializers import *
 from .models import *
 
@@ -194,11 +191,6 @@ loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
 product_predict = pickle.load(open('./model/Y_train.pkl', 'rb')) 
 
 
-def logout_view(request):
-    logout(request) # This logs the user out.
-    # Redirect to a success page.
-    return HttpResponseRedirect(reverse('login'))
-
 features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
 
 @api_view(['GET'])
@@ -252,6 +244,6 @@ def Recommend_product(request,user_id):
         products = Products.objects.filter(id__in=predicted_ids_list)
         serializer = ProductReadSerializer(products, many=True)
         return Response(serializer.data)
-    return Response({"Error":"Pleasure do some order or click on some history"})
+    return Response({})
 
 
