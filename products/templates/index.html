@@ -298,7 +298,6 @@
                     alert("Please login for the order")
                     window.location.href = `${API_BASE_URL}/auth/loginPage`;
                 }
-                console.log("Cart API called-----")
                 const userId = decodedToken.user_id;
                 const data = {
                     quantity: 1,
@@ -311,10 +310,6 @@
                 const body = JSON.stringify(data);
             
                 var url = `${API_BASE_URL}/products/listing/`;
-                console.log("Final Cart URL---", url)
-                accesstoken = localStorage.getItem("AccessToken");
-            
-                // Show loader
             
                 let options = {
                     method: 'POST',
