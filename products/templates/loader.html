@@ -16,7 +16,9 @@
             transform: translate(-50%, -50%);
             z-index: 9999; /* Ensure loader is on top of other content */
         }
-
+        body.blur {
+            filter: blur(5px);
+        }
        /* Blur page content */
     </style>
 </head>
@@ -29,13 +31,15 @@
         <p>Loading...</p>
     </div>
 
-    <!-- Your content here -->
-    <div class="container">
-        <h1>Welcome to My Page</h1>
-        <p>This is some text inside the page.</p>
-    </div>
-
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loaderContainer = document.querySelector('.loader-container');
+           // loaderContainer.classList.add('blur');
+            setTimeout(() => {
+                //document.body.classList.remove('blur');
+                loaderContainer.remove();
+            }, 10000); // Remove blur and loader after one minute (60000 milliseconds)
+        });
     </script>
 </body>
 </html>
