@@ -345,7 +345,7 @@
                 });
             }
             
-            async function fetchImageViaProxy(imageUrl) {
+           /* async function fetchImageViaProxy(imageUrl) {
                 try {
                     const response = await fetch(`${API_BASE_URL}/products/image-proxy?url=${encodeURIComponent(imageUrl)}`, { method: 'GET' });
                     if (!response.ok) {
@@ -357,7 +357,7 @@
                     console.error('Error fetching image via proxy:', error);
                     return null;
                 }
-            }
+            }*/
 
             let products_data = [];
             async function render_recommended_products() {
@@ -371,14 +371,14 @@
                             <div class="d-flex flex-wrap">`;
                 for (let i = currentIndex; i < currentIndex + 3 && i < products_data.length; i++) {
                     const d = products_data[i];
-                    const imageUrl = await fetchImageViaProxy(d.image);
+                    //const imageUrl = await fetchImageViaProxy(d.image);
                        
                     tab += `
                         <div class="col-lg-4 m-0">
                             <div class="p-4 rounded bg-light m-lg-2">
                                 <div class="row align-items-center">
                                     <div class="col-6">
-                                        <img src="${imageUrl}" class="img-fluid rounded-circle w-100" alt="">
+                                        <img src="${d.image}" class="img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <div class="col-6">
                                         <a href="#" class="h5">${d.title}</a>

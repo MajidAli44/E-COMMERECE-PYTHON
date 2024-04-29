@@ -3,6 +3,9 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
 from django.shortcuts import render
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from .serializers import *
 from .models import *
 
@@ -190,14 +193,23 @@ loaded_model = pickle.load(open('./model/knn_model_features_base.pkl', 'rb'))
 loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
 product_predict = pickle.load(open('./model/Y_train.pkl', 'rb')) 
 
+
+def logout_view(request):
+    logout(request) # This logs the user out.
+    # Redirect to a success page.
+    return HttpResponseRedirect(reverse('login'))
+
 features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
 
 @api_view(['GET'])
 def Recommend_product(request,user_id):
-    previous_orders = Order.objects.filter(user=user_id).order_by('-id')
+    print("User id---", user_id)
+    previous_orders = Order.objects.filter(user=user_id).order_by('-id')[:2]
+    print("previos order---", previous_orders)
     user_history = UserHistory.objects.filter(user=user_id).order_by('-id')[:2]
     products_ = []
     for order in previous_orders:
+        print("Order is---", order)
         new_data = { 
         'gender': order.product.gender,
         'masterCategory': order.product.mastercategory,

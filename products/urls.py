@@ -21,5 +21,6 @@ urlpatterns = [
     path('listing/', OrderCreation.as_view(), name='listing'),
     path('retrieve/<pk>', ProductRetrieve.as_view(), name='product_retrieve'),
     path('history', UserHistoryCreate.as_view(), name='user_history'),
+    path('logout/', logout_view, name='logout'),
     path('', include(router.urls))
 ]
