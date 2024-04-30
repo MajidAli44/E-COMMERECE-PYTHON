@@ -252,7 +252,8 @@ def Recommend_product(request,user_id):
                     recommendations.extend(category_recommendations)
 
         random.shuffle(recommendations)
-        products = Products.objects.filter(id__in=recommendations)
+        recommended_product = recommendations[:total_recommendations] 
+        products = Products.objects.filter(id__in=recommended_product)
         serializer = ProductReadSerializer(products, many=True)
         return Response(serializer.data)
     return Response({})
