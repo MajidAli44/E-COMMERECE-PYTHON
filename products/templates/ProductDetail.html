@@ -1,12 +1,58 @@
 {% extends "headerfooter.html" %}
 {% block content %}
 
+    <!-- Popup model for Order Reviews -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+            <h4 class="modal-title">Rating and Review</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="rating">Rating:</label>
+                        <div class="rating">
+                            <i class="fas fa-star" data-value="1" onclick="setRating(1, this)"></i>
+                            <i class="fas fa-star" data-value="2" onclick="setRating(2, this)"></i>
+                            <i class="fas fa-star" data-value="3" onclick="setRating(3, this)"></i>
+                            <i class="fas fa-star" data-value="4" onclick="setRating(4, this)"></i>
+                            <i class="fas fa-star" data-value="5" onclick="setRating(5, this)"></i>
+                        </div>
+                        <input type="hidden" id="ratingValue" name="ratingValue">
+                    </div>
+                    <!-- New form-group for the review title -->
+                    <div class="form-group">
+                        <label for="reviewTitle">Title:</label>
+                        <input type="text" class="form-control" id="reviewTitle" name="reviewTitle" placeholder="Enter review title">
+                    </div>
+                    <div class="form-group">
+                        <label for="review">Review:</label>
+                        <textarea class="form-control" id="review" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="submitRating({{data.id}})">Submit</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+        </div>
+    </div>
+
     <div class="container-fluid mt-5">
         <div class="row justify-content-center">
             <div class="col-12">
                 <h1 class="text-center my-4">Items from API</h1>
                 <div id="items-container" class="row">
-                    {% comment %} <div class="card"> {% endcomment %}
                         <div class="row no-gutters">
                             <div class="col-md-3" style="margin-left:50px;" >
                                 <img src={{data.image}} class="card-img ml-5" alt="ALter">
@@ -20,65 +66,143 @@
                                 </div>
                             </div>
                         </div>
-                    {% comment %} </div> {% endcomment %}
                 </div>
             </div>
         </div>
     </div>
     <script>
-        function addToCartClicked(pid, price) {
+    const API_BASE_URL = "{{ SITE_URL }}";
+    function addToCartClicked(pid, price) {
 
-            var accessToken = localStorage.getItem("AccessToken");
-            if (!accessToken) {
-                alert("Please login for the order")
-                window.location.href = `${API_BASE_URL}/auth/loginPage`;
-            }
-            console.log("Cart API called-----")
-            const userId = decodedToken.user_id;
-            const data = {
-                quantity: 1,
-                product: pid,
-                user: userId,
-                price: price
-            };
-        
-            // Convert the JSON object to a string
-            const body = JSON.stringify(data);
-        
-            var url = `${API_BASE_URL}/products/listing/`;
-            console.log("Final Cart URL---", url)
-        
-            // Show loader
-        
-            let options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + accesstoken,
-                },
-                body: JSON.stringify(data),
-            };
-        
-            let fetchRes = fetch(url, options);
-            fetchRes.then(res => {
-        
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        console.error("API request failed:", errorData);
-                        throw new Error("Network response was not OK");
-                    });
-                }
-                return res.json(); // Return the JSON data promise
-            }).then(data => {
-                if (data) {
-                    console.log("responce----", data)
-                    alert("Thank you for Ordering")
-                } else {
-                    console.log("API request failed or did not indicate success.");
-                }
-            }).catch(error => {
-                console.error("Error:", error);
-            });
+        var accessToken = localStorage.getItem("AccessToken");
+        if (!accessToken) {
+            alert("Please login for the order")
+            window.location.href = `${API_BASE_URL}/auth/loginPage`;
         }
+        const decodedToken = jwtDecode(accessToken);
+        console.log("Cart API called-----")
+        const userId = decodedToken.user_id;
+        const data = {
+            quantity: 1,
+            product: pid,
+            user: userId,
+            price: price
+        };
+    
+        // Convert the JSON object to a string
+        const body = JSON.stringify(data);
+    
+        var url = `${API_BASE_URL}/products/listing/`;
+    
+        // Show loader
+    
+        let options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accesstoken,
+            },
+            body: JSON.stringify(data),
+        };
+    
+        let fetchRes = fetch(url, options);
+        fetchRes.then(res => {
+    
+            if (!res.ok) {
+                return res.json().then(errorData => {
+                    console.error("API request failed:", errorData);
+                    throw new Error("Network response was not OK");
+                });
+            }
+            return res.json(); // Return the JSON data promise
+        }).then(data => {
+            if (data) {
+                console.log("responce----", data)
+                alert("Thank you for Ordering")
+                $('#myModal').modal('show');
+            } else {
+                console.log("API request failed or did not indicate success.");
+            }
+        }).catch(error => {
+            console.error("Error:", error);
+        });
+    }
+
+
+    let ratings = {};
+
+    function setRating(value, element) {
+        // Store the rating value in a custom data attribute
+        element.dataset.rating = value;
+    
+        // Update the star icons based on the rating value
+        const stars = element.parentElement.querySelectorAll('.fa-star');
+        stars.forEach((star, index) => {
+            if (index < value) {
+                star.classList.add('fas', 'text-warning');
+                star.classList.remove('far');
+            } else {
+                star.classList.remove('fas', 'text-warning');
+                star.classList.add('far');
+            }
+        });
+    }
+
+    function submitRating(product_id) {
+        // Retrieve the rating value from the custom data attribute
+        const rating = parseInt(document.querySelector('.fa-star[data-rating]').dataset.rating);
+
+        // Retrieve the review title and description from the form
+        const reviewTitle = document.getElementById('reviewTitle').value;
+        const review = document.getElementById('review').value;
+    
+        // Use the rating value for further processing or API calls
+        console.log('Rating:', rating);
+        console.log('Rating: type', typeof rating);
+        console.log('product', product_id);
+        const data = {
+            rating: rating,
+            name: reviewTitle,
+            description: review,
+            product:product_id
+        };
+        
+        // Convert the JSON object to a string
+        const body = JSON.stringify(data);
+        
+        // Define the URL of your backend endpoint
+        const url = `${API_BASE_URL}/products/review`; // Replace with your actual backend endpoint URL
+        
+        // Show loader or any indication that the request is being processed
+        
+        // Set up the fetch options
+        let options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                },
+            body: body,
+        };
+        
+        // Send the request to the backend
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Return the JSON data promise
+            })
+            .then(data => {
+                console.log('Success:', data);
+                Alert("Feedback Submitted Successfully")
+                // Handle success, e.g., show a success message or close the modal
+                $('#myModal').modal('hide');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error, e.g., show an error message
+            });
+        
+    }
     </script>
 {% endblock content %}

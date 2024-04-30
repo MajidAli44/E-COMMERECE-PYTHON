@@ -17,9 +17,9 @@ urlpatterns = [
     path('checkout/', CheckoutPageView, name='checkout_page'),
     path('predict/', predict_price_view, name='predict_price_view'),
     path('recommended/products/<user_id>', Recommend_product, name='predict_price_view'),
-    path('image-proxy/', image_proxy, name='image_proxy'),
     path('listing/', OrderCreation.as_view(), name='listing'),
     path('retrieve/<pk>', ProductRetrieve.as_view(), name='product_retrieve'),
     path('history', UserHistoryCreate.as_view(), name='user_history'),
+    path('review', ReviewView.as_view(), name='products_review'),
     path('', include(router.urls))
 ]

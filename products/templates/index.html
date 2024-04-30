@@ -91,6 +91,7 @@
                     </div>      
                 </div>
             </div>
+   
             <!-- Fruits Shop End-->
             <div class="loader-container d-flex flex-column align-items-center" id='loader'>
                 <div class="spinner-border mb-2" role="status">
@@ -98,6 +99,7 @@
                 </div>
                 <p>Loading...</p>
             </div>
+
         <script>
             const API_BASE_URL = "{{ SITE_URL }}";
             var accessToken = localStorage.getItem("AccessToken");
@@ -109,7 +111,6 @@
             } 
             let currentIndex = 0;
             function onLoadHandler() {
-                console.log(" Onload is called----");
                 ShowProducts();
                 if(accessToken){
                     show_recomended_products();
@@ -117,32 +118,25 @@
             }
             window.addEventListener("load", onLoadHandler);
             window.addEventListener("pageshow", function(event) {
-                console.log("onhander Onload is called----")
                 if (!event.persisted) {
                     onLoadHandler();
                 }
             });
-
+            
             function updatePaginationControls(totalPages, currentPage) {
-             //   const prevBtn = document.getElementById('prevPageBtn');
-              //  const nextBtn = document.getElementById('nextPageBtn');
+                
                 const paginationControls = document.getElementById('paginationControls');
                 paginationControls.innerHTML = '';
-            
-                // Clear existing page numbers
+
                 while (paginationControls.firstChild) {
                     paginationControls.removeChild(paginationControls.firstChild);
                 }
                 // Add page numbers
-                console.log("before cuurent page---", currentPage)
                 let startPage = Math.max(1, currentPage - 1);
                 let endPage = Math.min(totalPages, currentPage + 1);
                 if(startPage == 1 && endPage == 2){
-                    console.log("start page",)
                     endPage = endPage + 1
                 }
-                console.log("total pages----", startPage)
-                console.log("current page----", endPage)
 
                 const prevBtn = document.createElement('li');
                 prevBtn.className = 'page-item';
@@ -180,7 +174,7 @@
                 nextBtnLink.textContent = 'Next';
                 nextBtn.appendChild(nextBtnLink);
                 paginationControls.appendChild(nextBtn);
-                // Enable/disable Previous and Next buttons
+
                 prevBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage > 1) {
@@ -198,7 +192,6 @@
             let currentPage = 1; // Initialize the current page
             const itemsPerPage = 20; // Number of items per page
 
-            
             function ShowProducts(page = currentPage) {                
                 var url = `${API_BASE_URL}/products/?page=${page}`;
                 let options = {
@@ -215,16 +208,13 @@
                     return res.json(); // Return the JSON data promise
                 }).then(data => {
                     if (data) {
-                        console.log("responce----", data)
                         let tab = " ";
                         for (let d of data.results) {   
                             let Description = d.description.split(' ').slice(0, 7).join(' ');
                             let product_desc = Description.split(' ').filter(word => word.length > 0).join(' ');
                             if (d.description.split(' ').length > 7) {
                                 product_desc += '...';
-                            } 
-                            console.log("Image of product", d.image)
-                            console.log("type of Image of product", typeof d.image)                       
+                            }                       
                             tab += `                            
                             <div class="col-md-6 col-lg-4 col-xl-3" style="min-height: 660px; overflow: hidden;">
                                 <div class="rounded position-relative fruite-item d-flex flex-column h-100">
@@ -268,22 +258,16 @@
 
             function ProductDetail(event, product_id){
                 event.preventDefault();
-                console.log("Decoded Token---", decodedToken)
+
                 if(decodedToken){
                     const userId = decodedToken.user_id;
                     const data = {
                         product: product_id,
                         user: userId,
                     };
-                
-                    // Convert the JSON object to a string
+
                     const body = JSON.stringify(data);
-                
                     var url = `${API_BASE_URL}/products/history`;
-                    console.log("Final Cart URL---", url)
-                
-                    // Show loader
-                
                     let options = {
                         method: 'POST',
                         headers: {
@@ -304,7 +288,6 @@
                         return res.json();
                     }).then(data => {
                         if (data) {
-                            console.log("History is Saved----", data)
                             window.location.href = `${API_BASE_URL}/products/retrieve/${product_id}`;
                         } else {
                             console.log("API request failed or did not indicate success.");
@@ -361,7 +344,6 @@
                     return res.json(); // Return the JSON data promise
                 }).then(data => {
                     if (data) {
-                        console.log("responce ----", data)
                         $('#orderSuccessToast').toast('show');
                             show_recomended_products();
                     } else {
@@ -376,6 +358,7 @@
                 // Show the toast and set it to autohide after 5 seconds
                 $('#orderSuccessToast').toast({delay: 2000}); // 5000 milliseconds = 5 seconds
                 $('#orderSuccessToast').toast('show');
+
             }           
 
             let products_data = [];
@@ -401,7 +384,7 @@
                                     <div class="col-6">
                                         <a href="#" class="h5">${d.title}</a>
                                         <h4 class="mb-3">${d.unit_price}$</h4>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a>
+                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary" data-toggle="modal" data-target="#myModal" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -439,7 +422,6 @@
                 const userId = decodedToken.user_id;
                 url = `${API_BASE_URL}/products/recommended/products/${userId}`
                 const accesstoken = localStorage.getItem("AccessToken")
-                console.log("Access Token is----", accesstoken)
                 let options = {
                     method: "GET",
                     headers: {
@@ -457,7 +439,6 @@
                 }).then(data => {
                     products_data = data;
                     if (products_data) {
-                        console.log("Data is---",products_data)
                         if(Object.keys(products_data).length != 0){
                             render_recommended_products()
                         }

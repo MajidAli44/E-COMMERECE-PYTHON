@@ -18,20 +18,6 @@ class ProductReadSerializer(serializers.ModelSerializer):
             return "{0}{1}".format(settings.MEDIA_URL, obj.image.name)
         return ""
     
-    # def get_cart_set(self,obj):
-    #     cart_products = obj.cart.all()
-    #     user = self.context['request'].user.id
-    #     cart_data = []
-    #     for cart_product in cart_products:
-    #         if cart_product.user.id == user:
-    #             cart_data.append({
-    #                 'id': cart_product.id,
-    #                 'product_id': cart_product.product.id,
-    #                 'user_id': cart_product.user.id
-    #             })
-        
-    #     return cart_data
-    
 class ProductWriteSerializer(serializers.ModelSerializer):
     cart_set= serializers.SerializerMethodField()
     
@@ -61,3 +47,8 @@ class UserHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserHistory
         fields = '__all__'    
+        
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['product','name','description','rating']

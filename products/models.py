@@ -20,13 +20,12 @@ class Products(models.Model):
     mastercategory = models.CharField(max_length=50)
     subcategory = models.CharField(max_length=50)
     articletype = models.CharField(max_length=50)
-    # basecolour = models.CharField(max_length=50)
+    # basecolour = models.CharField(max_length=50)  
     season = models.CharField(max_length=20)
     title = models.CharField(max_length=255)
     description = models.TextField(max)
     unit_price = models.IntegerField()
     image = models.ImageField(upload_to='product/',max_length=255)
-    
  
     def __str__(self):
         return self.title
@@ -51,4 +50,21 @@ class UserHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     
+    
+    
+class Review(models.Model):
+    
+    PRODUCT_RATING = [
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5),
+    ]
+    
+    product = models.ForeignKey(Products,on_delete=models.CASCADE,related_name='reviews')
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    rating  = models.IntegerField(choices=PRODUCT_RATING)
+    date = models.DateField(auto_now_add=True)
     

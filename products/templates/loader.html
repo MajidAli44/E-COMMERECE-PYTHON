@@ -3,69 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Page with Custom Toast Notification</title>
-    <!-- Include Bootstrap CSS -->
+    <title>Bootstrap Modal with Star Rating</title>
+    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS for the toast -->
-    <style>
-        .toast {
-            background-color: #DCDCDC; /* Change the background color */
-            color: black; /* Change the text color */
-        }
-        .toast-header {
-            background-color: White; /* Change the header background color */
-        }
-        .toast-body {
-            font-size: 18px; /* Increase the font size */
-        }
-        /* Add a leader (line) to the toast */
-        .toast::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 5px solid #0069d9; /* Match the header background color */
-            margin-left: -5px; /* Adjust the position of the leader */
-        }
-    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
+    <!-- Button to Open the Modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+     Open Modal
+    </button>
 
-<!-- Add the toast container here -->
-<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
-    <div style="position: absolute; top: 0; right: 0;">
-        <div class="toast m-3" role="alert" aria-live="assertive" aria-atomic="true" id="orderSuccessToast">
-            <div class="toast-header">
-                <strong class="mr-auto">Order Success</strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="toast-body">
-                Your order has been placed successfully!
-            </div>
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+     <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Rate and Review</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="rating">Rating:</label>
+                <div class="rating">
+                 <i class="fas fa-star" data-value="1"></i>
+                 <i class="fas fa-star" data-value="2"></i>
+                 <i class="fas fa-star" data-value="3"></i>
+                 <i class="fas fa-star" data-value="4"></i>
+                 <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" id="ratingValue" name="ratingValue">
+              </div>
+              <div class="form-group">
+                <label for="review">Review:</label>
+                <textarea class="form-control" id="review" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+
         </div>
+     </div>
     </div>
-</div>
 
-<!-- Sample button to trigger the toast -->
-<button class="btn btn-primary" onclick="showToast()">Place Order</button>
-
-<!-- Include jQuery and Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script>
-    function showToast() {
-        // Show the toast and set it to autohide after 5 seconds
-        $('#orderSuccessToast').toast({delay: 60000}); // 5000 milliseconds = 5 seconds
-        $('#orderSuccessToast').toast('show');
-    }
-</script>
-
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript for Star Rating -->
+    <script>
+    $(document).ready(function(){
+        $('.rating i').click(function(){
+            var value = $(this).data('value');
+            $('#ratingValue').val(value);
+            $('.rating i').removeClass('fas fa-star');
+            $('.rating i').addClass('far fa-star');
+            for(var i=0; i<value; i++){
+                $('.rating i').eq(i).removeClass('far fa-star');
+                $('.rating i').eq(i).addClass('fas fa-star');
+            }
+        });
+    });
+    </script>
 </body>
 </html>

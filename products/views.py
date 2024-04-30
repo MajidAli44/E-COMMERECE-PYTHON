@@ -13,10 +13,12 @@ from gensim.models import Word2Vec
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.preprocessing import image as img_preprocessing
 
+from collections import Counter
 import numpy as np
 import pandas as pd
 import pickle
 import requests
+import random
 
 
 def IndexPageView(request):
@@ -168,23 +170,6 @@ def predict_price_view(request):
         # Render the HTML form
         return render(request, 'priceprediction.html')
 
-       
-@api_view(['GET'])
-def image_proxy(request):
-    image_url = request.GET.get('url', '')
-    # Fetch the image from the HTTP server using requests library
-    response = requests.get(image_url, stream=True)
-
-    if response.status_code == 200:
-        # Set the content type based on the response headers
-        content_type = response.headers.get('content-type', 'image/jpeg')
-        
-        # Return the image content with appropriate content type
-        return HttpResponse(response.content, content_type=content_type)
-    else:
-        # If the request failed, return an empty response or handle the error as needed
-        return HttpResponse(status=response.status_code)
-
 
 loaded_model = pickle.load(open('./model/knn_model_features_base.pkl', 'rb'))
 loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
@@ -193,12 +178,25 @@ product_predict = pickle.load(open('./model/Y_train.pkl', 'rb'))
 
 features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season','unit_price']
 
+
+
+
+def get_knn_recommendations(product_data, num_recs):
+    # Encode features of the product
+    product_df = pd.DataFrame([product_data])
+    for feature in features:
+        product_df[feature] = loaded_encoders[feature].transform(product_df[feature])
+
+    # Get nearest neighbors
+    distances, indices = loaded_model.kneighbors(product_df, n_neighbors=num_recs)
+    predicted_ids = product_predict.iloc[indices[0]].tolist()
+    return predicted_ids
+
 @api_view(['GET'])
 def Recommend_product(request,user_id):
-    print("User id---", user_id)
-    previous_orders = Order.objects.filter(user=user_id).order_by('-id')[:2]
+    previous_orders = Order.objects.filter(user=user_id).order_by('-id')
     print("previos order---", previous_orders)
-    user_history = UserHistory.objects.filter(user=user_id).order_by('-id')[:2]
+    user_history = UserHistory.objects.filter(user=user_id).order_by('-id')
     products_ = []
     if previous_orders:
         for order in previous_orders:
@@ -228,25 +226,96 @@ def Recommend_product(request,user_id):
 
     print("Total products---", products_)
     if products_:
-        new_df = pd.DataFrame(products_)
-        print("New Df---", new_df)
-        for feature in features:
-            new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
+        num_orders = len(products_)
 
-        distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
+        # Determine total number of recommendations based on order count
+        if num_orders > 3:
+            total_recommendations = 10
+        else:
+            total_recommendations = num_orders * 3  # 3 recommendations per order
 
-        # Get Predicted IDs for Each Data Point
-        predicted_ids_list = []
-        for i in range(len(new_df)):
-            predicted_ids_for_point = product_predict.iloc[indices[i]]
-            predicted_ids_list.append(predicted_ids_for_point.values)
-        
-        print("Total Id's---", len(predicted_ids_list))
-        predicted_ids_list = [id for ids in predicted_ids_list for id in ids]
-        print("Total type Id's---", predicted_ids_list)
-        products = Products.objects.filter(id__in=predicted_ids_list)
+        # Categorize products using masterCategory, subCategory, and articleType
+        order_categories = [f"{item['gender']}_{item['masterCategory']}_{item['articleType']}" for item in products_] 
+
+        # Count product occurrences per category
+        category_counts = Counter(order_categories)
+
+        # Allocate recommendations proportionally (with a minimum)
+        min_recs_per_category = 1  # Ensure at least one recommendation per category
+        recommendations = []
+        for category, count in category_counts.items():
+            num_recs_for_category = max(min_recs_per_category, round(total_recommendations * count / len(products_)))
+            # Get 3 recommendations for each product in the category
+            for product in products_:
+                if f"{product['gender']}_{product['masterCategory']}_{product['articleType']}" == category:
+                    category_recommendations = get_knn_recommendations(product, 3)
+                    recommendations.extend(category_recommendations)
+
+        random.shuffle(recommendations)
+        products = Products.objects.filter(id__in=recommendations)
         serializer = ProductReadSerializer(products, many=True)
         return Response(serializer.data)
     return Response({})
 
+# @api_view(['GET'])
+# def Recommend_product(request,user_id):
+#     print("User id---", user_id)
+#     previous_orders = Order.objects.filter(user=user_id).order_by('-id')[:2]
+#     print("previos order---", previous_orders)
+#     user_history = UserHistory.objects.filter(user=user_id).order_by('-id')[:2]
+#     products_ = []
+#     if previous_orders:
+#         for order in previous_orders:
+#             print("Order is---", order)
+#             new_data = { 
+#             'gender': order.product.gender,
+#             'masterCategory': order.product.mastercategory,
+#             'subCategory': order.product.subcategory,
+#             'articleType': order.product.articletype,
+#             'season': order.product.season,
+#             'unit_price': order.product.unit_price
+#             }
+#             print("Aticle type---", order.product.articletype)
+#             print("unit type---", type(order.product.unit_price))
+#             products_.append(new_data)
+#     if user_history:
+#         for user in user_history:
+#             new_data = { 
+#             'gender': user.product.gender,
+#             'masterCategory': user.product.mastercategory,
+#             'subCategory': user.product.subcategory,
+#             'articleType': user.product.articletype,
+#             'season': user.product.season,
+#             'unit_price': user.product.unit_price
+#             }
+#             products_.append(new_data)
 
+#     print("Total products---", products_)
+#     if products_:
+#         new_df = pd.DataFrame(products_)
+#         print("New Df---", new_df)
+#         for feature in features:
+#             new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
+
+#         distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
+
+#         # Get Predicted IDs for Each Data Point
+#         predicted_ids_list = []
+#         for i in range(len(new_df)):
+#             predicted_ids_for_point = product_predict.iloc[indices[i]]
+#             predicted_ids_list.append(predicted_ids_for_point.values)
+        
+#         print("Total Id's---", len(predicted_ids_list))
+#         predicted_ids_list = [id for ids in predicted_ids_list for id in ids]
+#         print("Total type Id's---", predicted_ids_list)
+#         products = Products.objects.filter(id__in=predicted_ids_list)
+#         serializer = ProductReadSerializer(products, many=True)
+#         return Response(serializer.data)
+#     return Response({})
+
+
+
+class ReviewView(generics.CreateAPIView):
+    
+    serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
