@@ -57,3 +57,27 @@ button:hover {
 #predicted-price h2 {
     font-size: 18px;
 }
+
+.toast {
+    background-color: #DCDCDC; /* Change the background color */
+    color: black; /* Change the text color */
+}
+.toast-header {
+    background-color: White; /* Change the header background color */
+}
+.toast-body {
+    font-size: 18px; /* Increase the font size */
+}
+/* Add a leader (line) to the toast */
+.toast::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #0069d9; /* Match the header background color */
+    margin-left: -5px; /* Adjust the position of the leader */
+}

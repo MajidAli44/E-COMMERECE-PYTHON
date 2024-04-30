@@ -2,44 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loader Example</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Sample Page with Custom Toast Notification</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for the toast -->
     <style>
-        /* Center loader */
-        .loader-container {
-            position: fixed;
+        .toast {
+            background-color: #DCDCDC; /* Change the background color */
+            color: black; /* Change the text color */
+        }
+        .toast-header {
+            background-color: White; /* Change the header background color */
+        }
+        .toast-body {
+            font-size: 18px; /* Increase the font size */
+        }
+        /* Add a leader (line) to the toast */
+        .toast::before {
+            content: '';
+            position: absolute;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999; /* Ensure loader is on top of other content */
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid #0069d9; /* Match the header background color */
+            margin-left: -5px; /* Adjust the position of the leader */
         }
-        body.blur {
-            filter: blur(5px);
-        }
-       /* Blur page content */
     </style>
 </head>
 <body>
-    <!-- Loader -->
-    <div class="loader-container d-flex flex-column align-items-center">
-        <div class="spinner-border mb-2" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p>Loading...</p>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loaderContainer = document.querySelector('.loader-container');
-           // loaderContainer.classList.add('blur');
-            setTimeout(() => {
-                //document.body.classList.remove('blur');
-                loaderContainer.remove();
-            }, 10000); // Remove blur and loader after one minute (60000 milliseconds)
-        });
-    </script>
+<!-- Add the toast container here -->
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+    <div style="position: absolute; top: 0; right: 0;">
+        <div class="toast m-3" role="alert" aria-live="assertive" aria-atomic="true" id="orderSuccessToast">
+            <div class="toast-header">
+                <strong class="mr-auto">Order Success</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                Your order has been placed successfully!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sample button to trigger the toast -->
+<button class="btn btn-primary" onclick="showToast()">Place Order</button>
+
+<!-- Include jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function showToast() {
+        // Show the toast and set it to autohide after 5 seconds
+        $('#orderSuccessToast').toast({delay: 60000}); // 5000 milliseconds = 5 seconds
+        $('#orderSuccessToast').toast('show');
+    }
+</script>
+
 </body>
 </html>

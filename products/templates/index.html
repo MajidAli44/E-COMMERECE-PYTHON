@@ -2,6 +2,20 @@
 
 {% block content %}
 
+            <div style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 1050; margin-top:20px">
+                <div class="toast m-5" role="alert" aria-live="assertive" aria-atomic="true" id="orderSuccessToast" style="background-color: #f4f6f8;color: black;">
+                    <div class="toast-header" style=" background-color: #81c408; color:white">
+                        <strong class="mr-auto">Order Success</strong>
+                        <button type="button" class="mb-1 close" style="margin-left:180" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body align-content-center">
+                        Your order has been placed successfully!
+                    </div>
+                </div>
+            </div>
+            
             <!-- Modal Search Start -->
             <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-fullscreen">
@@ -228,7 +242,7 @@
                                                     <p class="text-dark fs-5 fw-bold mb-0">$ ${d.unit_price}</p>`
                                                     //if (d.cart_set.length == 0)
                                                     //   {
-                                                    tab += ` <a  class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a> `
+                                                    tab += ` <a  class="btn border border-secondary rounded-pill px-3 text-primary custom-button" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a> `
                             
                                                     //  }
                                                     tab += `</div>
@@ -311,6 +325,7 @@
                     alert("Please login for the order")
                     window.location.href = `${API_BASE_URL}/auth/loginPage`;
                 }
+                showToast()
                 const userId = decodedToken.user_id;
                 const data = {
                     quantity: 1,
@@ -347,7 +362,7 @@
                 }).then(data => {
                     if (data) {
                         console.log("responce ----", data)
-                        alert("Thank you for Ordering")
+                        $('#orderSuccessToast').toast('show');
                             show_recomended_products();
                     } else {
                         console.log("API request failed or did not indicate success.");
@@ -356,6 +371,12 @@
                     console.error("Error:", error);
                 });
             } 
+            
+            function showToast() {
+                // Show the toast and set it to autohide after 5 seconds
+                $('#orderSuccessToast').toast({delay: 2000}); // 5000 milliseconds = 5 seconds
+                $('#orderSuccessToast').toast('show');
+            }           
 
             let products_data = [];
             async function render_recommended_products() {
@@ -380,7 +401,7 @@
                                     <div class="col-6">
                                         <a href="#" class="h5">${d.title}</a>
                                         <h4 class="mb-3">${d.unit_price}$</h4>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCartClicked(${d.id},${d.unit_price})"><i class="fa fa-shopping-bag me-2 text-primary"></i> Buy Now</a>
                                     </div>
                                 </div>
                             </div>
