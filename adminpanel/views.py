@@ -36,7 +36,8 @@ def SentimentAnalysisPage(request):
 
 
 # Initialize a sentiment-analysis pipeline
-nlp = pipeline('sentiment-analysis')
+model_name = "distilbert/distilbert-base-uncased-finetuned-sst-2-english"
+nlp = pipeline('sentiment-analysis', model=model_name)
 
 
 def predict_sentiment(request):
