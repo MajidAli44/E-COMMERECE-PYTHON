@@ -34,8 +34,6 @@ def render_profile_page(request):
 def render_forgetpassword_page(request):
     return render(request, "forgetpassword.html") 
 
-def Admin_Page(request):
-    return render(request,'adminDashboard.html')
 
 
 class UserViewSet(viewsets.ModelViewSet):

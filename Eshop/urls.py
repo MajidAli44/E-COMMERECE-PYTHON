@@ -19,14 +19,13 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from products.views import IndexPageView
-from authentication.views import Admin_Page
 
 urlpatterns = [
     path('adminpage/', admin.site.urls),
     path('products/', include('products.urls')),
     path('auth/', include('authentication.urls')),
     path('', IndexPageView, name='index_page'),
-    path('admin/', Admin_Page, name='admin_page'),
+    path('admin/', include("adminpanel.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
 

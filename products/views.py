@@ -195,19 +195,16 @@ def get_knn_recommendations(product_data, num_recs):
 @api_view(['GET'])
 def Recommend_product(request,user_id):
     previous_orders = Order.objects.filter(user=user_id).order_by('-id')
-    print("previos order---", previous_orders)
     user_history = UserHistory.objects.filter(user=user_id).order_by('-id')
     products_ = []
     if previous_orders:
         for order in previous_orders:
-            print("Order is---", order)
             new_data = { 
             'gender': order.product.gender,
             'masterCategory': order.product.mastercategory,
             'subCategory': order.product.subcategory,
             'articleType': order.product.articletype,
             'season': order.product.season,
-            'unit_price': order.product.unit_price
             }
             print("Aticle type---", order.product.articletype)
             print("unit type---", type(order.product.unit_price))
@@ -219,12 +216,10 @@ def Recommend_product(request,user_id):
             'masterCategory': user.product.mastercategory,
             'subCategory': user.product.subcategory,
             'articleType': user.product.articletype,
-            'season': user.product.season,
-            'unit_price': user.product.unit_price
+            'season': user.product.season
             }
             products_.append(new_data)
 
-    print("Total products---", products_)
     if products_:
         num_orders = len(products_)
 
@@ -256,63 +251,6 @@ def Recommend_product(request,user_id):
         serializer = ProductReadSerializer(products, many=True)
         return Response(serializer.data)
     return Response({})
-
-# @api_view(['GET'])
-# def Recommend_product(request,user_id):
-#     print("User id---", user_id)
-#     previous_orders = Order.objects.filter(user=user_id).order_by('-id')[:2]
-#     print("previos order---", previous_orders)
-#     user_history = UserHistory.objects.filter(user=user_id).order_by('-id')[:2]
-#     products_ = []
-#     if previous_orders:
-#         for order in previous_orders:
-#             print("Order is---", order)
-#             new_data = { 
-#             'gender': order.product.gender,
-#             'masterCategory': order.product.mastercategory,
-#             'subCategory': order.product.subcategory,
-#             'articleType': order.product.articletype,
-#             'season': order.product.season,
-#             'unit_price': order.product.unit_price
-#             }
-#             print("Aticle type---", order.product.articletype)
-#             print("unit type---", type(order.product.unit_price))
-#             products_.append(new_data)
-#     if user_history:
-#         for user in user_history:
-#             new_data = { 
-#             'gender': user.product.gender,
-#             'masterCategory': user.product.mastercategory,
-#             'subCategory': user.product.subcategory,
-#             'articleType': user.product.articletype,
-#             'season': user.product.season,
-#             'unit_price': user.product.unit_price
-#             }
-#             products_.append(new_data)
-
-#     print("Total products---", products_)
-#     if products_:
-#         new_df = pd.DataFrame(products_)
-#         print("New Df---", new_df)
-#         for feature in features:
-#             new_df[feature] = loaded_encoders[feature].transform(new_df[feature])
-
-#         distances, indices = loaded_model.kneighbors(new_df, n_neighbors=3)
-
-#         # Get Predicted IDs for Each Data Point
-#         predicted_ids_list = []
-#         for i in range(len(new_df)):
-#             predicted_ids_for_point = product_predict.iloc[indices[i]]
-#             predicted_ids_list.append(predicted_ids_for_point.values)
-        
-#         print("Total Id's---", len(predicted_ids_list))
-#         predicted_ids_list = [id for ids in predicted_ids_list for id in ids]
-#         print("Total type Id's---", predicted_ids_list)
-#         products = Products.objects.filter(id__in=predicted_ids_list)
-#         serializer = ProductReadSerializer(products, many=True)
-#         return Response(serializer.data)
-#     return Response({})
-
 
 
 class ReviewView(generics.CreateAPIView):

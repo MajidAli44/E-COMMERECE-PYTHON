@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block body %}
+ <!-- ======== Preloader =========== -->
+ {% comment %} <div id="preloader">
+    <div class="spinner"></div> {% endcomment %}
+    </div>
+        <!-- ========== tables-wrapper start ========== -->
+        <div class="tables-wrapper">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card-style mb-30">
+                <h6 class="mb-10">Products</h6>
+                {% comment %} <p class="text-sm mb-20">
+                  For basic styling—light padding and only horizontal
+                  dividers—use the class table.
+                </p> {% endcomment %}
+                <div class="table-wrapper table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="lead-info">
+                          <h6>Title</h6>
+                        </th>
+                        <th class="lead-email">
+                          <h6>Category</h6>
+                        </th>
+                        <th class="lead-phone">
+                          <h6>Article</h6>
+                        </th>
+                        <th class="lead-company">
+                          <h6>Price</h6>
+                        </th>
+                        <th>
+                          <h6>Action</h6>
+                        </th>
+                      </tr>
+                      <!-- end table row-->
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td class="min-width">
+                                <div class="lead">
+                                    <div class="lead-image">
+                                    <img src="{{ product.image }}" alt="" />
+                                    </div>
+                                    <div class="lead-text">
+                                    <p>{{ product.title }}</p>
+                                    </div>
+                                </div>
+                                </td>
+                                <td class="min-width">
+                                <p><a href="#0">{{ product.subcategory }}</a></p>
+                                </td>
+                                <td class="min-width">
+                                <p>{{ product.articletype }}</p>
+                                </td>
+                                <td class="min-width">
+                                <p>{{ product.unit_price }}</p>
+                                </td>
+                                <td>
+                                <div class="action">
+                                    <button class="text-danger">
+                                    <i class="lni lni-trash-can"></i>
+                                    </button>
+                                </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- Pagination -->
+                    <div class="pagination float-end">
+                        <ul class="pagination justify-content-end">
+                            {% if products.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">first</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.previous_page_number }}">previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                                </span>
+                            </li>
+                            
+                            {% if products.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.next_page_number }}">next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.paginator.num_pages }}">last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                  <!-- end table -->
+                </div>
+              </div>
+              <!-- end card -->
+            </div>
+            <!-- end col -->
+          </div> 
+          <!-- end row -->
+        <!-- ========== tables-wrapper end ========== -->
+    </div>
+    <script>
+        console.log("")
+    </script>
+{% endblock body %}
