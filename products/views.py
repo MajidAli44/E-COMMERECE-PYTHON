@@ -176,7 +176,7 @@ loaded_encoders = pickle.load(open('./model/encoders_features_base.pkl', 'rb'))
 product_predict = pickle.load(open('./model/Y_train.pkl', 'rb')) 
 
 
-features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season','unit_price']
+features = ['gender', 'masterCategory', 'subCategory', 'articleType', 'season']
 
 
 
